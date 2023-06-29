@@ -6,7 +6,7 @@ module.exports = {
     ], theme: {
         extend: {
             aspectRatio: {
-                '4/3': '1 / 1.414',
+                'dinA6': '1 / 1.414',
             },
         },
     },
