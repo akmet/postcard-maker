@@ -1,0 +1,30 @@
+name: Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency: main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          cache: "yarn"
+          cache-dependency-path: "yarn.lock"
+
+      - name: Install dependencies
+        run: yarn ci
+      - name: Build electron
+        run: yarn electron:build
+      - name: Build
+        run: yarn build
+      - name: Deploy Pages
+        run: echo "uploading to pages"
+      

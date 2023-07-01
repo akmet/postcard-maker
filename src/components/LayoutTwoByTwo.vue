@@ -1,5 +1,4 @@
-
-<script setup>
+<script lang="ts" setup>
 </script>
 
 <template>
@@ -10,4 +9,4 @@
     <div id="container_3" class="bg-green-500"></div>
   </div>
 </template>
-<style scoped></style>
+<style></style>

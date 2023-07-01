@@ -1,5 +1,4 @@
-<script setup>
-
+<script lang="ts" setup>
 </script>
 
 <template>
@@ -44,7 +43,7 @@
   </aside>
 </template>
 
-<style scoped>
+<style>
 .wrapper {
   width: 50px;
 }

@@ -1,15 +1,12 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-    content: [
-        "./index.html",
-        "./src/**/*.{vue,js,ts,jsx,tsx}",
-    ], theme: {
-        extend: {
-            aspectRatio: {
-                'dinA6': '1 / 1.414',
-            },
-        },
-    },
-    plugins: [],
+export default {
+  content: [
+    "./public/index.html",
+    "./src/**/*.{js,ts,jsx,tsx,vue}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 }
 

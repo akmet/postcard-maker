@@ -1,5 +1,6 @@
-
-<script setup>
+<script lang="ts" setup>
+const emit = defineEmits(['created'])
+emit('created')
 </script>
 
 <template>
@@ -11,4 +12,4 @@
     <div id="container_4" class="col-span-4 bg-orange-500"></div>
   </div>
 </template>
-<style scoped></style>
+<style></style>

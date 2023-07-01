@@ -1,16 +1,19 @@
-export default function () {
-    for (let stage of this.stages) {
-        let page = document.getElementById('page');
+import Konva from "konva";
+
+export default function (stages: Konva.Stage[]) {
+    let page = document.getElementById('page');
+    if (!(page instanceof HTMLDivElement)) {
+        return;
+    }
+    for (let stage of stages) {
 
         let scaleWidth = page.offsetWidth / stage.width();
         let scaleHeight = page.offsetHeight / stage.height();
         //console.log(page.offsetWidth, stage.width(), scaleWidth);
         //console.log(page.offsetHeight, stage.height(), scaleHeight);
-        stage.scale({
-            x: scaleWidth,
-            y: scaleHeight,
-            width: 100,
-        })
+        stage.scaleX(scaleWidth)
+            .scaleY(scaleHeight)
+
         stage.width(page.offsetWidth);
         stage.height(page.offsetHeight);
         stage.draw();

@@ -2,108 +2,75 @@
 	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"></SidebarMenu>
 	<div class="p-4 ml-64 h-screen" id="page">
 
-		<div class="a6-container aspect-[dinA6]">
-			<LayoutTwoByTwo v-if="this.template === 0"></LayoutTwoByTwo>
-			<LayoutTwoByThree v-else-if="this.template === 1"></LayoutTwoByThree>
-			<LayoutThreeByTwo v-else-if="this.template === 2"></LayoutThreeByTwo>
+		<div class="a6-container aspect-[dinA6]" id="container_parent2">
+			<component :is="dynamicComponent"></component>
 		</div>
 	</div>
 </template>
 
-<script>
-
-import LayoutTwoByTwo from "./components/LayoutTwoByTwo.vue";
-import LayoutThreeByTwo from "./components/LayoutThreeByTwo.vue";
-import LayoutTwoByThree from "./components/LayoutTwoByThree.vue";
-import SidebarMenu from "@/components/SidebarMenu.vue";
-import handleStageMouseDown from "@/helper/handleStageMouseDown";
-import attachNodeToTransformer from "@/helper/attachNodeToTransformer";
-import fitStageIntoParentContainer from "@/helper/fitStageIntoParentContainer";
+<script lang="ts" setup>
+import createStages from "./helper/createStages";
+import fitStageIntoParentContainer from "./helper/fitStageIntoParentContainer";
 import Konva from 'konva';
+import { computed, onMounted } from "vue";
 
-export default {
-	name: 'PostcardMaker',
-	components: {
-		SidebarMenu,
-		LayoutTwoByTwo,
-		LayoutThreeByTwo,
-		LayoutTwoByThree,
-	},
-	data() {
-		return {
-			stages: [],
-			template: 0,
-		};
-	},
-	mounted() {
-		const image = new window.Image();
-		image.src = "/yoda.jpg";
-		image.onload = () => {
-			for (let stage of this.stages) {
-				let layer = stage.findOne((node) => node.getClassName() === 'Layer');
-				layer.add(
-					new Konva.Image({
-						x: 0,
-						y: 0,
-						image: image,
-						width: layer.clip.width,
-						height: layer.clip.height,
-						draggable: true,
-					})
-				);
-			}
-		};
+let stages: Konva.Stage[] = [];
+let template = 0;
+const components = [
+	'LayoutTwoByTwo',
+	'LayoutTwoByThree',
+	'LayoutThreeByTwo',
+];
 
-		window.addEventListener('resize', this.fitStageIntoParentContainer);
-		let parentContainer = document.getElementById('container_parent');
-		console.log(parentContainer.children[0]);
+const dynamicComponent = computed(
+	() => components[template]
+)
 
-		for (let container of parentContainer.children) {
-			let page = document.getElementById('page');
-			this.stages.push(
-				new Konva.Stage({
-					container: container,
-					width: page.offsetWidth,
-					height: page.offsetHeight,
+onMounted(() => {
+	createStages(stages);
+	const image = new window.Image();
+	image.src = "dist/yoda.jpg";
+	image.onload = () => {
+		console.log("loaded yoda");
+		for (let stage of stages) {
+			let layer = stage.findOne((node: Node) => node instanceof Konva.Layer) as Konva.Layer;
+			layer.add(
+				new Konva.Image({
+					x: 0,
+					y: 0,
+					image: image,
+					width: layer.clip().width,
+					height: layer.clip().height,
+					draggable: true,
 				})
-					.on('mousedown', this.handleStageMouseDown)
-					.add(
-						new Konva.Layer({
-							clip: {
-								x: 0,
-								y: 0,
-								width: container.offsetWidth,
-								height: container.offsetHeight
-							}
-						})
-							.add(
-								new Konva.Transformer({
-									nodes: [],
-									rotateAnchorOffset: 60,
-									enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
-								})
-							)
-					)
-					.draw()
 			);
 		}
-		this.fitStageIntoParentContainer();
-	},
-	methods: {
-		exportImage() {
-			console.log("export!");
-		},
-		handleStageMouseDown,
-		attachNodeToTransformer,
-		fitStageIntoParentContainer,
-		updateGap($event) {
-			document.getElementById('container_parent').style.gap = $event.target.value + "rem";
-			return;
-		},
-		switchTemplate(template) {
-			this.template = template;
-		}
-	},
+	};
+
+	window.addEventListener('resize', () => fitStageIntoParentContainer(stages));
+
+	fitStageIntoParentContainer(stages);
+
+})
+
+function exportImage() {
+	console.log("export!");
+}
+
+function updateGap(event: Event) {
+	let target = event?.target;
+	let container_parent = document.getElementById('container_parent');
+	if (!(target instanceof HTMLInputElement) || container_parent === null) {
+		return;
+	}
+	container_parent.style.gap = target.value + "rem";
+	return;
+}
+
+function switchTemplate(nextTemplate: number) {
+	console.log(nextTemplate);
+	template = nextTemplate;
+	console.log(template);
 }
 </script>
 

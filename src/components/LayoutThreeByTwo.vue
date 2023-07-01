@@ -1,5 +1,4 @@
-
-<script setup>
+<script lang="ts" setup>
 </script>
 
 <template>
@@ -11,4 +10,5 @@
     <div id="container_4" class="col-span-6 bg-pink-500"></div>
   </div>
 </template>
-<style scoped></style>
+
+<style></style>
