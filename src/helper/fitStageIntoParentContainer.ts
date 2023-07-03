@@ -19,20 +19,19 @@ export default function (stages: Konva.Stage[]) {
         stage.draw();
         /*
             let container = stage.getContainer();
-                        const layer = stage.findOne((node) => node.getClassName() === 'Layer');
-                        const clip = layer.clip();
-        
-        
-                        let scaleWidth = container.offsetWidth / Math.max(1, clip.width);
-                        let scaleHeight = container.offsetHeight / Math.max(1, clip.height);
-                        layer.scale({
-                            x: clip.width * scaleWidth,
-                            y: clip.height * scaleHeight,
-                        });
-                        layer.clip({
-                            width: clip.width * scaleWidth,
-                            height: clip.height * scaleHeight,
-                        });
-                        */
+            const layer = stage.findOne((node) => node.getClassName() === 'Layer');
+            const clip = layer.clip();
+
+            let scaleWidth = container.offsetWidth / Math.max(1, clip.width);
+            let scaleHeight = container.offsetHeight / Math.max(1, clip.height);
+            layer.scale({
+                x: clip.width * scaleWidth,
+                y: clip.height * scaleHeight,
+            });
+            layer.clip({
+                width: clip.width * scaleWidth,
+                height: clip.height * scaleHeight,
+            });
+        */
     }
 }

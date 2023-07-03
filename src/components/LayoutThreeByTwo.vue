@@ -10,5 +10,4 @@
     <div id="container_4" class="col-span-6 bg-pink-500"></div>
   </div>
 </template>
-
 <style></style>

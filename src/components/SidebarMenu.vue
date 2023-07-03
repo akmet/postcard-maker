@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import FileDrop from './FileDrop.vue';
 </script>
 
 <template>
@@ -38,7 +39,14 @@
         </li>
       </ul>
       <label class="dark:text-white">Gap</label>
-      <input id="gap" type="range" min="0" max="2" step="0.5" value="0" @input="$emit('gapInput', $event)" />
+      <input id="gap" type="range" min="0" max="20" step="5" value="0" @input="$emit('gapInput', $event)" />
+
+      <FileDrop @changed-file="$emit('changedFile', $event, 0)" index="1"></FileDrop>
+      <FileDrop @changed-file="$emit('changedFile', $event, 1)" index="2"></FileDrop>
+      <FileDrop @changed-file="$emit('changedFile', $event, 2)" index="3"></FileDrop>
+      <FileDrop @changed-file="$emit('changedFile', $event, 3)" index="4"></FileDrop>
+      <FileDrop @changed-file="$emit('changedFile', $event, 4)" index="5"></FileDrop>
+
     </div>
   </aside>
 </template>

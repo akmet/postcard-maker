@@ -1,8 +1,9 @@
 <template>
-	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"></SidebarMenu>
+	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"
+		@changed-file="changedFile"></SidebarMenu>
 	<div class="p-4 ml-64 h-screen" id="page">
 
-		<div class="a6-container aspect-[dinA6]" id="container_parent2">
+		<div class="a6-container aspect-[dinA6]">
 			<component :is="dynamicComponent"></component>
 		</div>
 	</div>
@@ -12,10 +13,13 @@
 import createStages from "./helper/createStages";
 import fitStageIntoParentContainer from "./helper/fitStageIntoParentContainer";
 import Konva from 'konva';
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
+import handleFileChange from "./helper/handleFileChange";
 
 let stages: Konva.Stage[] = [];
-let template = 0;
+let template = ref(0);
+let gap = 0;
+
 const components = [
 	'LayoutTwoByTwo',
 	'LayoutTwoByThree',
@@ -23,7 +27,7 @@ const components = [
 ];
 
 const dynamicComponent = computed(
-	() => components[template]
+	() => components[template.value]
 )
 
 onMounted(() => {
@@ -49,6 +53,7 @@ onMounted(() => {
 
 	window.addEventListener('resize', () => fitStageIntoParentContainer(stages));
 
+
 	fitStageIntoParentContainer(stages);
 
 })
@@ -63,13 +68,36 @@ function updateGap(event: Event) {
 	if (!(target instanceof HTMLInputElement) || container_parent === null) {
 		return;
 	}
-	container_parent.style.gap = target.value + "rem";
-	return;
+	container_parent.style.gap = target.value + "px";
+
+	let diff = (Number.parseInt(target.value) - gap) / 2;
+	for (let stage of stages) {
+		let layer = stage.findOne((node: Node) => node instanceof Konva.Layer) as Konva.Layer;
+		console.log("layer", layer.width());
+
+		let width = stage.width();
+		let height = stage.height();
+		layer.scaleX((width - diff) / width)
+		layer.scaleY((height - diff) / height)
+		stage.width(width - diff);
+		stage.height(height - diff);
+		stage.draw();
+	}
+	gap = Number.parseInt(target.value);
+}
+
+function changedFile(event: Event, index: number) {
+
+	console.log(index);
+	if (event.target instanceof HTMLInputElement) {
+		handleFileChange(event.target, stages[index]);
+	}
 }
 
 function switchTemplate(nextTemplate: number) {
+	console.log(template);
 	console.log(nextTemplate);
-	template = nextTemplate;
+	template.value = nextTemplate;
 	console.log(template);
 }
 </script>
