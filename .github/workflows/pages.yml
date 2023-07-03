@@ -20,11 +20,10 @@ jobs:
           cache-dependency-path: "yarn.lock"
 
       - name: Install dependencies
-        run: yarn ci
-      - name: Build electron
-        run: yarn electron:build
+        run: yarn install
       - name: Build
         run: yarn build
-      - name: Deploy Pages
-        run: echo "uploading to pages"
+      - uses: actions/setup-node@v3
+        with: 
+          path: "dist/"
       
