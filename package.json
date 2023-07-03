@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "konva": "^9.2.0",
+    "pinia": "^2.1.4",
     "vue": "^3.2.47",
     "vue-konva": "^3.0.2"
   },

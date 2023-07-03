@@ -1,9 +1,9 @@
 <template>
 	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"
-		@changed-file="changedFile"></SidebarMenu>
-	<div class="p-4 ml-64 h-screen" id="page">
+		@changed-file="changedFile" @select-layer="selectLayer"></SidebarMenu>
+	<div class="p-4 ml-64 h-screen flex justify-center items-center" id="page">
 
-		<div class="a6-container aspect-[dinA6]">
+		<div class="a6-container">
 			<component :is="dynamicComponent"></component>
 		</div>
 	</div>
@@ -15,8 +15,9 @@ import fitStageIntoParentContainer from "./helper/fitStageIntoParentContainer";
 import Konva from 'konva';
 import { computed, onMounted, ref } from "vue";
 import handleFileChange from "./helper/handleFileChange";
+import { useStagesStore } from "./stores/stagesStore";
 
-let stages: Konva.Stage[] = [];
+const stages = useStagesStore().stages;
 let template = ref(0);
 let gap = 0;
 
@@ -31,7 +32,7 @@ const dynamicComponent = computed(
 )
 
 onMounted(() => {
-	createStages(stages);
+	createStages();
 	const image = new window.Image();
 	image.src = "dist/yoda.jpg";
 	image.onload = () => {
@@ -51,10 +52,10 @@ onMounted(() => {
 		}
 	};
 
-	window.addEventListener('resize', () => fitStageIntoParentContainer(stages));
+	window.addEventListener('resize', () => fitStageIntoParentContainer());
 
 
-	fitStageIntoParentContainer(stages);
+	fitStageIntoParentContainer();
 
 })
 
@@ -100,6 +101,10 @@ function switchTemplate(nextTemplate: number) {
 	template.value = nextTemplate;
 	console.log(template);
 }
+
+function selectLayer(event: Event, index: number) {
+	console.log(event.target, index);
+}
 </script>
 
 <style>
@@ -115,7 +120,7 @@ function switchTemplate(nextTemplate: number) {
 .a6-container {
 	/* Set the dimensions of the container to match the ratio of DIN A6 */
 
-	height: 90vh;
+	height: 70vh;
 	aspect-ratio: calc(148 / 105);
 	/*height: calc(105px * 5);
 	*/

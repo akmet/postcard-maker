@@ -1,12 +1,12 @@
-import Konva from "konva";
+import { useStagesStore } from "../stores/stagesStore";
 
-export default function (stages: Konva.Stage[]) {
+export default function () {
     let page = document.getElementById('page');
     if (!(page instanceof HTMLDivElement)) {
         return;
     }
-    for (let stage of stages) {
 
+    for (let stage of useStagesStore().stages) {
         let scaleWidth = page.offsetWidth / stage.width();
         let scaleHeight = page.offsetHeight / stage.height();
         //console.log(page.offsetWidth, stage.width(), scaleWidth);

@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 import FileDrop from './FileDrop.vue';
+
+const props = defineProps(['selectedPicture']);
+
+let selectedPicture = 0;
 </script>
 
 <template>
@@ -38,15 +42,16 @@ import FileDrop from './FileDrop.vue';
           </a>
         </li>
       </ul>
+      <hr class="my-5">
       <label class="dark:text-white">Gap</label>
       <input id="gap" type="range" min="0" max="20" step="5" value="0" @input="$emit('gapInput', $event)" />
+      <hr class="my-5">
 
-      <FileDrop @changed-file="$emit('changedFile', $event, 0)" index="1"></FileDrop>
-      <FileDrop @changed-file="$emit('changedFile', $event, 1)" index="2"></FileDrop>
-      <FileDrop @changed-file="$emit('changedFile', $event, 2)" index="3"></FileDrop>
-      <FileDrop @changed-file="$emit('changedFile', $event, 3)" index="4"></FileDrop>
-      <FileDrop @changed-file="$emit('changedFile', $event, 4)" index="5"></FileDrop>
-
+      <div v-for="(item, index) in [1, 2, 3, 4, 5]"
+        :class="{ 'bg-gray-100 dark:bg-gray-700 rounded-lg': selectedPicture == index }">
+        <label class="dark:text-white" @click="$emit('selectLayer', $event, index)">Bild {{ item }}</label>
+        <FileDrop @changed-file="$emit('changedFile', $event, index)"></FileDrop>
+      </div>
     </div>
   </aside>
 </template>
