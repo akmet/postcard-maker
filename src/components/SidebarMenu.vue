@@ -2,10 +2,6 @@
 import FileDrop from './FileDrop.vue';
 import stageZoom from '../helper/stageZoom';
 import handleFileChange from '../helper/handleFileChange';
-
-const props = defineProps(['selectedPicture']);
-
-let selectedPicture = 0;
 </script>
 
 <template>

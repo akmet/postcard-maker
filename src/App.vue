@@ -1,6 +1,6 @@
 <template>
 	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"
-		@changed-file="changedFile" @select-layer="selectLayer"></SidebarMenu>
+		@select-layer="selectLayer"></SidebarMenu>
 	<div class="p-4 ml-64 h-screen flex justify-center items-center" id="page">
 		<div id="stageContainer" class="w-full h-full bg-red-100">
 
@@ -11,18 +11,12 @@
 <script lang="ts" setup>
 import createStages from "./helper/createStages";
 import Konva from 'konva';
-import { computed, onMounted, ref } from "vue";
-import handleFileChange from "./helper/handleFileChange";
+import { onMounted, ref } from "vue";
 import { useStageStore } from "./stores/stageStore";
 
 let template = ref(0);
 let gap = 0;
 
-const components = [
-	'LayoutTwoByTwo',
-	'LayoutTwoByThree',
-	'LayoutThreeByTwo',
-];
 
 
 onMounted(() => {
@@ -57,14 +51,6 @@ function updateGap(event: Event) {
 	gap = Number.parseInt(target.value);
 }
 
-function changedFile(event: Event, index: number) {
-
-	console.log(index);
-	if (event.target instanceof HTMLInputElement) {
-		const stage = useStageStore().stage as Konva.Stage;
-		handleFileChange(event.target, stage);
-	}
-}
 
 function switchTemplate(nextTemplate: number) {
 	console.log(template);
