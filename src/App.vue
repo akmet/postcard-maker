@@ -24,7 +24,20 @@ onMounted(() => {
 })
 
 function exportImage() {
-	console.log("export!");
+	const stage = useStageStore().stage as Konva.Stage;
+	const rect = stage.findOne((node: Node) => node instanceof Konva.Rect) as Konva.Rect;
+	stage.toDataURL({
+		x: rect.x(),
+		y: rect.y(),
+		width: rect.width(),
+		height: rect.height(),
+		callback(str: string) {
+			var a = document.createElement("a");
+			a.download = "svg-graph.png";
+			a.href = str;
+			a.click();
+		}
+	});
 }
 
 function updateGap(event: Event) {
