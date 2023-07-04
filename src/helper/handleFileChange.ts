@@ -1,6 +1,8 @@
 import Konva from "konva";
+import { useStageStore } from "../stores/stageStore";
 
-export default function (target: HTMLInputElement, stage: Konva.Stage) {
+export default function (target: HTMLInputElement, item: number) {
+    console.log(target);
     if (target.files?.length !== 1) {
         console.log("Error: files hat nicht ein Element");
         return;
@@ -11,9 +13,26 @@ export default function (target: HTMLInputElement, stage: Konva.Stage) {
     img.src = url;
     console.log(url);
     img.onload = () => {
-        let layer = stage.findOne((node: Node) => node instanceof Konva.Layer) as Konva.Layer;
-        let image = layer.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
-        console.log(image);
-        image.image(img);
+        const stage = useStageStore().stage as Konva.Stage;
+
+        let group = stage.findOne((node: Node) => node instanceof Konva.Group && node.name() === 'Bild ' + item) as Konva.Group;
+        let image = group.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
+        if (image) {
+            console.log("found image");
+            image.image(img);
+        }
+        else {
+            group.add(
+                new Konva.Image({
+                    x: group.clipX(),
+                    y: group.clipY(),
+                    width: group.clipWidth(),
+                    height: group.clipHeight(),
+                    draggable: true,
+                    image: img,
+                })
+            );
+            console.log("added iamge", group);
+        }
     };
 }

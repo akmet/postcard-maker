@@ -1,16 +1,20 @@
 import Konva from "konva";
 import attachNodeToTransformer from "./attachNodeToTransformer";
 
-export default function (event: Konva.KonvaEventObject<MouseEvent>, stages: Konva.Stage[]) {
+export default function (event: Konva.KonvaEventObject<MouseEvent>) {
+
     let target = event.target;
+    console.log(target);
     if (!(target instanceof Konva.Node)) {
+        console.log("Target is not Node")
         return;
     }
 
     if (target instanceof Konva.Stage) {
-        for (let stage of stages) {
-            const layer = stage.findOne((node: Konva.Node) => node instanceof Konva.Layer) as Konva.Layer;
-            attachNodeToTransformer(layer);
+        console.log("Target is stage");
+        const layers = target.getLayers();
+        if (layers) {
+            attachNodeToTransformer(layers);
         }
         return;
     }
@@ -19,9 +23,9 @@ export default function (event: Konva.KonvaEventObject<MouseEvent>, stages: Konv
         return;
     }
     if (target instanceof Konva.Image) {
-        let layer = target.getLayer();
-        if (layer) {
-            attachNodeToTransformer(layer, target);
+        let layers = target.getStage()?.getLayers();
+        if (layers) {
+            attachNodeToTransformer(layers, target);
         }
         return;
     }

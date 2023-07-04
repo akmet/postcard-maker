@@ -2,22 +2,19 @@
 	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"
 		@changed-file="changedFile" @select-layer="selectLayer"></SidebarMenu>
 	<div class="p-4 ml-64 h-screen flex justify-center items-center" id="page">
+		<div id="stageContainer" class="w-full h-full bg-red-100">
 
-		<div class="a6-container">
-			<component :is="dynamicComponent"></component>
 		</div>
 	</div>
 </template>
 
 <script lang="ts" setup>
 import createStages from "./helper/createStages";
-import fitStageIntoParentContainer from "./helper/fitStageIntoParentContainer";
 import Konva from 'konva';
 import { computed, onMounted, ref } from "vue";
 import handleFileChange from "./helper/handleFileChange";
-import { useStagesStore } from "./stores/stagesStore";
+import { useStageStore } from "./stores/stageStore";
 
-const stages = useStagesStore().stages;
 let template = ref(0);
 let gap = 0;
 
@@ -27,36 +24,9 @@ const components = [
 	'LayoutThreeByTwo',
 ];
 
-const dynamicComponent = computed(
-	() => components[template.value]
-)
 
 onMounted(() => {
 	createStages();
-	const image = new window.Image();
-	image.src = "dist/yoda.jpg";
-	image.onload = () => {
-		console.log("loaded yoda");
-		for (let stage of stages) {
-			let layer = stage.findOne((node: Node) => node instanceof Konva.Layer) as Konva.Layer;
-			layer.add(
-				new Konva.Image({
-					x: 0,
-					y: 0,
-					image: image,
-					width: layer.clip().width,
-					height: layer.clip().height,
-					draggable: true,
-				})
-			);
-		}
-	};
-
-	window.addEventListener('resize', () => fitStageIntoParentContainer());
-
-
-	fitStageIntoParentContainer();
-
 })
 
 function exportImage() {
@@ -72,18 +42,18 @@ function updateGap(event: Event) {
 	container_parent.style.gap = target.value + "px";
 
 	let diff = (Number.parseInt(target.value) - gap) / 2;
-	for (let stage of stages) {
-		let layer = stage.findOne((node: Node) => node instanceof Konva.Layer) as Konva.Layer;
-		console.log("layer", layer.width());
+	const stage = useStageStore().stage as Konva.Stage;
+	let layer = stage.findOne((node: Node) => node instanceof Konva.Layer) as Konva.Layer;
+	console.log("layer", layer.width());
 
-		let width = stage.width();
-		let height = stage.height();
-		layer.scaleX((width - diff) / width)
-		layer.scaleY((height - diff) / height)
-		stage.width(width - diff);
-		stage.height(height - diff);
-		stage.draw();
-	}
+	let width = stage.width();
+	let height = stage.height();
+	layer.scaleX((width - diff) / width)
+	layer.scaleY((height - diff) / height)
+	stage.width(width - diff);
+	stage.height(height - diff);
+	stage.draw();
+
 	gap = Number.parseInt(target.value);
 }
 
@@ -91,7 +61,8 @@ function changedFile(event: Event, index: number) {
 
 	console.log(index);
 	if (event.target instanceof HTMLInputElement) {
-		handleFileChange(event.target, stages[index]);
+		const stage = useStageStore().stage as Konva.Stage;
+		handleFileChange(event.target, stage);
 	}
 }
 
