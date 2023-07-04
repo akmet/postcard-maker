@@ -9,8 +9,13 @@ export default function () {
     if (!(stageContainer instanceof HTMLDivElement)) {
         return;
     }
-    const height = stageContainer.offsetHeight * 0.6
-    const width = height * (148 / 105)
+    let height = stageContainer.offsetHeight * 0.9
+    let width = height * (148 / 105)
+
+    if (width > stageContainer.offsetWidth) {
+        width = stageContainer.offsetWidth * 0.9
+        height = width * (105 / 148)
+    }
 
     const baseX = (stageContainer.offsetWidth - width) / 2;
     const baseY = (stageContainer.offsetHeight - height) / 2;
@@ -20,6 +25,7 @@ export default function () {
             container: stageContainer,
             width: stageContainer.offsetWidth,
             height: stageContainer.offsetHeight,
+            draggable: true,
         })
             .on('mousedown', (evt) => handleStageMouseDown(evt))
             .add(

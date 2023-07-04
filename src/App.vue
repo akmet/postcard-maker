@@ -2,7 +2,7 @@
 	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"
 		@select-layer="selectLayer"></SidebarMenu>
 	<div class="p-4 ml-64 h-screen flex justify-center items-center" id="page">
-		<div id="stageContainer" class="w-full h-full bg-red-100">
+		<div id="stageContainer" class="w-full h-full">
 
 		</div>
 	</div>
@@ -72,16 +72,6 @@ function selectLayer(event: Event, index: number) {
 	text-align: center;
 	color: #2c3e50;
 	background-color: #333333;
-}
-
-.a6-container {
-	/* Set the dimensions of the container to match the ratio of DIN A6 */
-
-	height: 70vh;
-	aspect-ratio: calc(148 / 105);
-	/*height: calc(105px * 5);
-	*/
-	background-color: white;
 }
 
 .konva {

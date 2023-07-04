@@ -11,6 +11,7 @@ export default function (target: HTMLInputElement, item: number) {
     var url = URL.createObjectURL(target.files[0]);
     const img = new window.Image();
     img.src = url;
+
     console.log(url);
     img.onload = () => {
         const stage = useStageStore().stage as Konva.Stage;
@@ -27,7 +28,7 @@ export default function (target: HTMLInputElement, item: number) {
                     x: group.clipX(),
                     y: group.clipY(),
                     width: group.clipWidth(),
-                    height: group.clipHeight(),
+                    height: (group.clipWidth() / img.width) * img.height,
                     draggable: true,
                     image: img,
                 })
