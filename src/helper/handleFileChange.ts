@@ -19,8 +19,9 @@ export default function (target: HTMLInputElement, item: number) {
         let group = stage.findOne((node: Node) => node instanceof Konva.Group && node.name() === 'Bild ' + item) as Konva.Group;
         let image = group.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
         if (image) {
-            console.log("found image");
             image.image(img);
+            image.width(group.clipWidth());
+            image.height((group.clipWidth() / img.width) * img.height);
         }
         else {
             group.add(

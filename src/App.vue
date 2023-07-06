@@ -1,7 +1,7 @@
 <template>
 	<SidebarMenu @gap-input="updateGap" @export-image="exportImage" @switch-template="switchTemplate"
 		@select-layer="selectLayer"></SidebarMenu>
-	<div class="p-4 ml-64 h-screen flex justify-center items-center" id="page">
+	<div class="ml-64 h-screen flex justify-center items-center" id="page">
 		<div id="stageContainer" class="w-full h-full">
 
 		</div>
@@ -21,6 +21,15 @@ let gap = 0;
 
 onMounted(() => {
 	createStages();
+	window.addEventListener('resize', () => {
+		const stageContainer = document.getElementById('stageContainer');
+		if (!(stageContainer instanceof HTMLDivElement)) {
+			return;
+		}
+		const stage = useStageStore().stage as Konva.Stage;
+		stage.width(stageContainer.offsetWidth);
+		stage.height(stageContainer.offsetHeight);
+	});
 })
 
 function exportImage() {
@@ -42,26 +51,33 @@ function exportImage() {
 
 function updateGap(event: Event) {
 	let target = event?.target;
-	let container_parent = document.getElementById('container_parent');
-	if (!(target instanceof HTMLInputElement) || container_parent === null) {
+	let stageContainer = document.getElementById('stageContainer');
+	if (!(target instanceof HTMLInputElement) || stageContainer === null) {
 		return;
 	}
-	container_parent.style.gap = target.value + "px";
+	const newGap = Number.parseInt(target.value);
+	const store = useStageStore();
+	const oldGap = store.gap as number;
+	const stage = store.stage as Konva.Stage;
 
-	let diff = (Number.parseInt(target.value) - gap) / 2;
-	const stage = useStageStore().stage as Konva.Stage;
-	let layer = stage.findOne((node: Node) => node instanceof Konva.Layer) as Konva.Layer;
-	console.log("layer", layer.width());
+	let diff = newGap - oldGap;
+	console.log("oldGap: " + oldGap);
+	console.log("newGap: " + newGap);
+	console.log("diff: " + diff)
+	//const groups = stage.find((node: Konva.Node) => node instanceof Konva.Group && node.name().startsWith('Bild')) as Konva.Group[];
+	const groups = stage.find((node: Konva.Node) => node instanceof Konva.Image) as Konva.Image[];
+	for (let group of groups) {
+		//console.log(group.name(), group.clip(), group.getAttr('gaps'));
 
-	let width = stage.width();
-	let height = stage.height();
-	layer.scaleX((width - diff) / width)
-	layer.scaleY((height - diff) / height)
-	stage.width(width - diff);
-	stage.height(height - diff);
-	stage.draw();
+		/*const gaps = group.getAttr('gaps');
+		if (gaps.left) {
 
-	gap = Number.parseInt(target.value);
+			//group.clipWidth(group.clipWidth() -)
+		}
+		*/
+	}
+
+	store.setGap(newGap);
 }
 
 

@@ -9,16 +9,22 @@ export default function () {
     if (!(stageContainer instanceof HTMLDivElement)) {
         return;
     }
-    let height = stageContainer.offsetHeight * 0.9
-    let width = height * (148 / 105)
+    let height = 1240;
+    let width = 1748;
 
-    if (width > stageContainer.offsetWidth) {
-        width = stageContainer.offsetWidth * 0.9
-        height = width * (105 / 148)
+    let scale = 1;
+
+    if (width > stageContainer.offsetWidth * 0.9) {
+        scale = Math.min(scale, stageContainer.offsetWidth * 0.9 / width);
+        console.log("new scale: " + scale);
+    }
+    if (height > stageContainer.offsetHeight * 0.9) {
+        scale = Math.min(scale, stageContainer.offsetHeight * 0.9 / height);
+        console.log("new scale: " + scale);
     }
 
-    const baseX = (stageContainer.offsetWidth - width) / 2;
-    const baseY = (stageContainer.offsetHeight - height) / 2;
+    const baseX = (stageContainer.offsetWidth - (width * scale)) / 2;
+    const baseY = (stageContainer.offsetHeight - (height * scale)) / 2;
 
     let stage =
         new Konva.Stage({
@@ -49,6 +55,13 @@ export default function () {
             y: 0,
             width: width / 2 - gap / 2,
             height: height / 2 - gap / 2,
+            gaps: {
+                up: false,
+                down: true,
+                left: false,
+                right: true,
+                elements: 2,
+            }
         },
         {
             name: "Bild 2",
@@ -56,6 +69,13 @@ export default function () {
             y: height / 2 + gap / 2,
             width: width / 2 - gap / 2,
             height: height / 2 - gap / 2,
+            gaps: {
+                up: true,
+                down: false,
+                left: false,
+                right: true,
+                elements: 2,
+            }
         },
         {
             name: "Bild 3",
@@ -63,6 +83,13 @@ export default function () {
             y: 0,
             width: width / 2 - gap / 2,
             height: height / 2 - gap / 2,
+            gaps: {
+                up: false,
+                down: true,
+                left: true,
+                right: false,
+                elements: 2,
+            }
         },
         {
             name: "Bild 4",
@@ -70,6 +97,13 @@ export default function () {
             y: height / 2 + gap / 2,
             width: width / 2 - gap / 2,
             height: height / 2 - gap / 2,
+            gaps: {
+                up: false,
+                down: true,
+                left: true,
+                right: false,
+                elements: 2,
+            }
         },
 
     ];
@@ -93,11 +127,13 @@ export default function () {
                             width: layer.width,
                             height: layer.height,
                         }
-                    })
+                    }).setAttr('gaps', layer.gaps)
                 )
         )
     }
 
-    stage.draw()
+    stage.scaleX(scale);
+    stage.scaleY(scale);
+    stage.draw();
     useStageStore().setStage(stage)
 }
