@@ -16,6 +16,11 @@ import TextModal from './TextModal.vue';
     <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800 grid grid-cols-2 gap-4 dark:text-white
       place-items-center align-items-center justify-items-stretch content-start">
 
+      <div class="col-span-2 flex justify-between gap-4 items-center">
+        <img class="h-8" src="/favicon.jpg">
+        <div class="text-xl flex-grow text-center">PostkartenTool</div>
+      </div>
+      <hr class="col-span-2 w-full">
       <label class="justify-self-start">Layout</label>
       <select class="dark:bg-gray-800" @change="switchTemplate">
         <option :value="Layout.TwoByTwo">2+2</option>

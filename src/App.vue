@@ -7,6 +7,7 @@
 
 <script lang="ts" setup>
 import createStages from "./helper/createStages";
+import SidebarMenu from "./components/SidebarMenu.vue";
 import { onMounted } from "vue";
 import resizeStage from "./helper/resizeStage";
 
