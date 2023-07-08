@@ -3,7 +3,6 @@
 	<div class="ml-64 h-screen flex justify-center items-center" id="page">
 		<div id="stageContainer" class="w-full h-full"></div>
 	</div>
-	<TextModal></TextModal>
 </template>
 
 <script lang="ts" setup>
