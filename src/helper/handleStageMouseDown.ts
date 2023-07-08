@@ -4,14 +4,11 @@ import attachNodeToTransformer from "./attachNodeToTransformer";
 export default function (event: Konva.KonvaEventObject<MouseEvent>) {
 
     let target = event.target;
-    console.log(target);
     if (!(target instanceof Konva.Node)) {
-        console.log("Target is not Node")
         return;
     }
 
     if (target instanceof Konva.Stage) {
-        console.log("Target is stage");
         const layers = target.getLayers();
         if (layers) {
             attachNodeToTransformer(layers);
@@ -29,5 +26,4 @@ export default function (event: Konva.KonvaEventObject<MouseEvent>) {
         }
         return;
     }
-    console.log("Leider nichts gefunden", target.getClassName(), target.getParent().getClassName());
 }

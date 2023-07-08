@@ -13,56 +13,41 @@ import TextModal from './TextModal.vue';
   <aside id="default-sidebar"
     class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-0 sm:translate-x-0"
     aria-label="Sidebar">
-    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-      <ul class="space-y-2 font-medium">
-        <li>
-          <a class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white ">
-            <span class="ml-auto mr-auto">Templates</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" @click="switchTemplate(Layout.TwoByTwo)"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="ml-3">2+2</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" @click="switchTemplate(Layout.TwoByThree)"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="ml-3">2+3</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" @click="switchTemplate(Layout.ThreeByTwo)"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="ml-3">3+2</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" @click="exportImage"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-            <span class="ml-3">Export</span>
-          </a>
-        </li>
-      </ul>
-      <hr class="my-5">
-      <div class="ml-auto mr-auto dark:text-white">Gap</div>
+    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800 grid grid-cols-2 gap-4 dark:text-white
+      place-items-center align-items-center justify-items-stretch content-start">
+
+      <label class="justify-self-start">Layout</label>
+      <select class="dark:bg-gray-800" @change="switchTemplate">
+        <option :value="Layout.TwoByTwo">2+2</option>
+        <option :value="Layout.TwoByThree">2+3</option>
+        <option :value="Layout.ThreeByTwo">3+2</option>
+      </select>
+      <label class="justify-self-start">Gap</label>
       <input id="gap" type="range" min="0" max="50" step="10" value="0" @input="updateGap" />
-      <hr class="my-5">
 
-      <div class="flex justify-evenly">
-        <div class="rounded-lg bg-gray-700 dark:text-white p-1 w-5" @click="stageZoom(-0.1)">-</div>
-        <div class="dark:text-white">Zoom</div>
-        <div class="rounded-lg bg-gray-700 dark:text-white p-1 w-5" @click="stageZoom(0.1)">+</div>
-      </div>
-      <hr class="my-5">
 
-      <div v-for="item in  [1, 2, 3, 4, 5] " :key="item">
-        <label class="dark:text-white">Bild {{ item }}</label>
-        <FileDrop :item="item" @changed-file="(data) => handleFileChange(data.$event.target, data.id)">
-        </FileDrop>
+      <label class="justify-self-start">Zoom</label>
+      <div class="flex justify-around">
+        <div class="rounded-lg dark:bg-gray-700 aspect-square w-6 text-center" @click="stageZoom(-0.1)">-</div>
+        <div class="rounded-lg dark:bg-gray-700 aspect-square w-6 text-center" @click="stageZoom(0.1)">+</div>
       </div>
-      <TextModal></TextModal>
+      <hr class="col-span-2">
+      <FileDrop v-for="item in  [1, 2, 3, 4, 5] " :key="item" :item="item"
+        @changed-file="(data) => handleFileChange(data.$event.target, data.id)">
+      </FileDrop>
+
+      <hr class="col-span-2 w-full">
+      <div class="col-span-2 grid grid-cols-2 gap-4">
+        <TextModal></TextModal>
+      </div>
+
+      <hr class="col-span-2 w-full mt-auto">
+      <label class="justify-self-start">Speichern als</label>
+      <select class="w-full dark:bg-gray-800" @change="exportImage">
+        <option value="-1" disabled selected>Bitte wählen</option>
+        <option value="picture">Bild</option>
+        <option value="json">Json</option>
+      </select>
     </div>
   </aside>
 </template>

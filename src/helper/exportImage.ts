@@ -2,12 +2,24 @@ import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
 
 
-export default function () {
-    const filename = prompt("Dateiname", "postkarte.png");
+export default function (event: Event) {
+    if (!(event.target instanceof HTMLSelectElement)) {
+        return;
+    }
+    const method = event.target.value;
+    event.target.value = "-1";
+    const filename = prompt("Dateiname ohne Dateiendung", "postkarte");
     if (filename === null || filename.length < 3) {
         return;
     }
     const stage = useStageStore().stage as Konva.Stage;
+
+    if (method === 'json') {
+        const json = stage.toJSON();
+        console.log(json);
+        return;
+    }
+
     const rect = stage.findOne((node: Node) => node instanceof Konva.Rect) as Konva.Rect;
     const scale = stage.scale();
     stage.scale({
@@ -21,7 +33,7 @@ export default function () {
         height: rect.height(),
         callback(str: string) {
             var a = document.createElement("a");
-            a.download = filename;
+            a.download = filename + '.png';
             a.href = str;
             a.click();
         }

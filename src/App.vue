@@ -1,6 +1,6 @@
 <template>
 	<SidebarMenu></SidebarMenu>
-	<div class="ml-64 h-screen flex justify-center items-center" id="page">
+	<div class="ml-64 h-screen flex justify-center items-center bg-gray-200 dark:bg-gray-900" id="page">
 		<div id="stageContainer" class="w-full h-full"></div>
 	</div>
 </template>
@@ -15,19 +15,3 @@ onMounted(() => {
 	window.addEventListener('resize', resizeStage);
 })
 </script>
-
-<style>
-#app {
-	font-family: Avenir, Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
-	color: #2c3e50;
-	background-color: #333333;
-}
-
-.konva {
-	width: 100%;
-	height: 100%;
-}
-</style>

@@ -1,15 +1,21 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
-import { Layout } from "../types/types";
 import getStageElementsByTemplate from "./getStageElementsByTemplate";
 
 
-export default function (nextTemplate: Layout) {
-    const store = useStageStore();
-    if (store.layout === nextTemplate) {
+export default function (event: Event) {
+    const target = event.target;
+    if (!(target instanceof HTMLSelectElement)) {
+        console.log("target is not select element");
         return;
     }
-    store.setLayout(nextTemplate);
+    const layout = Number.parseInt(target.value);
+    const store = useStageStore();
+    if (store.layout == layout) {
+        console.log("cannot change layout to current layout")
+        return;
+    }
+    store.setLayout(layout);
     const stage = store.stage as Konva.Stage;
 
     const layers = getStageElementsByTemplate();

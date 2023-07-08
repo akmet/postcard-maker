@@ -18,11 +18,9 @@ export default function () {
 
     if (width > stageContainer.offsetWidth * 0.9) {
         scale = Math.min(scale, stageContainer.offsetWidth * 0.9 / width);
-        console.log("new scale: " + scale);
     }
     if (height > stageContainer.offsetHeight * 0.9) {
         scale = Math.min(scale, stageContainer.offsetHeight * 0.9 / height);
-        console.log("new scale: " + scale);
     }
 
     const baseX = (stageContainer.offsetWidth - (width * scale)) / 2;

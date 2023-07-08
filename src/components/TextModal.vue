@@ -63,10 +63,6 @@ onMounted(async () => {
             fontAvailable.push(font);
         }
     }
-    console.log('Available Fonts:', fontAvailable);
-
-
-
 })
 
 function showModal() {
