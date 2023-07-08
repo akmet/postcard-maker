@@ -9,7 +9,6 @@
 import createStages from "./helper/createStages";
 import { onMounted } from "vue";
 import resizeStage from "./helper/resizeStage";
-import TextModal from "./components/TextModal.vue";
 
 onMounted(() => {
 	createStages();
