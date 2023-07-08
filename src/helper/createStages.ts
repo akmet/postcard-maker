@@ -1,5 +1,6 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
+import getStageElementsByTemplate from "./getStageElementsByTemplate";
 import handleStageMouseDown from "./handleStageMouseDown";
 
 
@@ -9,8 +10,9 @@ export default function () {
     if (!(stageContainer instanceof HTMLDivElement)) {
         return;
     }
-    let height = 1240;
-    let width = 1748;
+    let store = useStageStore();
+    const width = store.dimensions.width
+    const height = store.dimensions.height
 
     let scale = 1;
 
@@ -34,103 +36,49 @@ export default function () {
             draggable: true,
         })
             .on('mousedown', (evt) => handleStageMouseDown(evt))
-            .add(
-                new Konva.Layer()
-                    .add(
-                        new Konva.Rect({
-                            x: baseX,
-                            y: baseY,
-                            width: width,
-                            height: height,
-                            fill: "white"
-                        })
-                    )
-            )
 
-    let gap = 30;
-    const layers = [
-        {
-            name: "Bild 1",
-            x: 0,
-            y: 0,
-            width: width / 2 - gap / 2,
-            height: height / 2 - gap / 2,
-            gaps: {
-                up: false,
-                down: true,
-                left: false,
-                right: true,
-                elements: 2,
-            }
-        },
-        {
-            name: "Bild 2",
-            x: 0,
-            y: height / 2 + gap / 2,
-            width: width / 2 - gap / 2,
-            height: height / 2 - gap / 2,
-            gaps: {
-                up: true,
-                down: false,
-                left: false,
-                right: true,
-                elements: 2,
-            }
-        },
-        {
-            name: "Bild 3",
-            x: width / 2 + gap / 2,
-            y: 0,
-            width: width / 2 - gap / 2,
-            height: height / 2 - gap / 2,
-            gaps: {
-                up: false,
-                down: true,
-                left: true,
-                right: false,
-                elements: 2,
-            }
-        },
-        {
-            name: "Bild 4",
-            x: width / 2 + gap / 2,
-            y: height / 2 + gap / 2,
-            width: width / 2 - gap / 2,
-            height: height / 2 - gap / 2,
-            gaps: {
-                up: false,
-                down: true,
-                left: true,
-                right: false,
-                elements: 2,
-            }
-        },
-
-    ];
-    for (let layer of layers) {
-
-        stage.add(
-            new Konva.Layer()
-                .add(
-                    new Konva.Transformer({
-                        nodes: [],
-                        rotateAnchorOffset: 60,
-                        enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
-                    })
-                )
-                .add(
-                    new Konva.Group({
-                        name: layer.name,
-                        clip: {
-                            x: baseX + layer.x,
-                            y: baseY + layer.y,
-                            width: layer.width,
-                            height: layer.height,
-                        }
-                    }).setAttr('gaps', layer.gaps)
-                )
+    const layers = getStageElementsByTemplate();
+    const layerImage = new Konva.Layer({
+        name: "layer_image"
+    })
+        .add(
+            new Konva.Rect({
+                x: baseX,
+                y: baseY,
+                width: width,
+                height: height,
+                fill: "white",
+                stroke: 'black',
+                strokeWidth: 1,
+            })
         )
+        .add(
+            new Konva.Transformer({
+                nodes: [],
+                rotateAnchorOffset: 60,
+                enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
+            })
+        )
+    for (let layer of layers) {
+        layerImage.add(
+            new Konva.Group({
+                name: layer.name,
+                clip: {
+                    x: baseX + layer.x,
+                    y: baseY + layer.y,
+                    width: layer.width,
+                    height: layer.height,
+                }
+            }).setAttr('baseX', baseX).setAttr('baseY', baseY)
+        )
+
     }
+    stage.add(layerImage);
+    stage.add(
+        new Konva.Layer({
+            name: "layer_text"
+        })
+    )
 
     stage.scaleX(scale);
     stage.scaleY(scale);

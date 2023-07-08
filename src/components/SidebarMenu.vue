@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import FileDrop from './FileDrop.vue';
 import stageZoom from '../helper/stageZoom';
+import switchTemplate from '../helper/switchTemplate';
 import handleFileChange from '../helper/handleFileChange';
+import { Layout } from '../types/types';
+import exportImage from '../helper/exportImage';
+import updateGap from '../helper/updateGap';
+import TextModal from './TextModal.vue';
 </script>
 
 <template>
@@ -16,25 +21,25 @@ import handleFileChange from '../helper/handleFileChange';
           </a>
         </li>
         <li>
-          <a href="#" @click="$emit('switchTemplate', 0)"
+          <a href="#" @click="switchTemplate(Layout.TwoByTwo)"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
             <span class="ml-3">2+2</span>
           </a>
         </li>
         <li>
-          <a href="#" @click="$emit('switchTemplate', 1)"
+          <a href="#" @click="switchTemplate(Layout.TwoByThree)"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
             <span class="ml-3">2+3</span>
           </a>
         </li>
         <li>
-          <a href="#" @click="$emit('switchTemplate', 2)"
+          <a href="#" @click="switchTemplate(Layout.ThreeByTwo)"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
             <span class="ml-3">3+2</span>
           </a>
         </li>
         <li>
-          <a href="#" @click="$emit('exportImage')"
+          <a href="#" @click="exportImage"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
             <span class="ml-3">Export</span>
           </a>
@@ -42,7 +47,7 @@ import handleFileChange from '../helper/handleFileChange';
       </ul>
       <hr class="my-5">
       <div class="ml-auto mr-auto dark:text-white">Gap</div>
-      <input id="gap" type="range" min="0" max="20" step="5" value="0" @input="$emit('gapInput', $event)" />
+      <input id="gap" type="range" min="0" max="50" step="10" value="0" @input="updateGap" />
       <hr class="my-5">
 
       <div class="flex justify-evenly">
@@ -57,6 +62,7 @@ import handleFileChange from '../helper/handleFileChange';
         <FileDrop :item="item" @changed-file="(data) => handleFileChange(data.$event.target, data.id)">
         </FileDrop>
       </div>
+      <TextModal></TextModal>
     </div>
   </aside>
 </template>

@@ -22,6 +22,7 @@ export default function (target: HTMLInputElement, item: number) {
             image.image(img);
             image.width(group.clipWidth());
             image.height((group.clipWidth() / img.width) * img.height);
+            image.setAttrs({ imgWidth: img.width, imgHeight: img.height });
         }
         else {
             group.add(
@@ -32,7 +33,7 @@ export default function (target: HTMLInputElement, item: number) {
                     height: (group.clipWidth() / img.width) * img.height,
                     draggable: true,
                     image: img,
-                })
+                }).setAttrs({ imgWidth: img.width, imgHeight: img.height })
             );
             console.log("added iamge", group);
         }
