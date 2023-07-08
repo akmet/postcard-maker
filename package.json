@@ -19,6 +19,7 @@
     "vue-konva": "^3.0.2"
   },
   "devDependencies": {
+    "@types/quill": "^2.0.10",
     "@vitejs/plugin-vue": "^4.1.0",
     "autoprefixer": "^10.4.14",
     "electron": "^25.2.0",

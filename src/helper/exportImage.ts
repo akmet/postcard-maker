@@ -3,7 +3,7 @@ import { useStageStore } from "../stores/stageStore";
 
 
 export default function () {
-    let filename = prompt("Dateiname", "postkarte.png");
+    const filename = prompt("Dateiname", "postkarte.png");
     if (filename === null || filename.length < 3) {
         return;
     }

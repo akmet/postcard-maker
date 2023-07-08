@@ -1,5 +1,5 @@
 <template>
-    <button @click="props.showModal = !props.showModal"
+    <button @click="showModal"
         class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         type="button">
         Add Text
@@ -30,11 +30,11 @@ import Quill from "quill";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.bubble.css";
 import "quill/dist/quill.snow.css";
-import html2canvas from 'html2canvas';
+//import html2canvas from 'html2canvas';
 import "../fonts.css"
 
-let timeout = null as NodeJS.Timeout | null;
 const props = defineProps(['showModal'])
+let fontAvailable = [] as String[];
 
 onMounted(async () => {
     //getFonts();
@@ -57,8 +57,6 @@ onMounted(async () => {
         'Trattatello', 'Trebuchet MS', 'Verdana', 'Zapfino',
     ].sort());
 
-    const fontAvailable = [];
-
     await document.fonts.ready;
     for (const font of fontCheck.values()) {
         if (document.fonts.check(`12px "${font}"`)) {
@@ -67,10 +65,15 @@ onMounted(async () => {
     }
     console.log('Available Fonts:', fontAvailable);
 
+
+
+})
+
+function showModal() {
+    console.log("showModal");
     let fonts = Quill.import("attributors/style/font");
-    console.log(fonts);
-    fonts.whitelist = fontAvailable;
     Quill.register(fonts, true);
+    fonts.whitelist = fontAvailable;
     new Quill('#editor-container', {
         modules: {
             toolbar: [
@@ -87,19 +90,8 @@ onMounted(async () => {
         },
         theme: 'snow',
     });
-
-})
-
-function requestTextUpdate() {
-    if (timeout) {
-        return;
-    }
-    timeout = setTimeout(function () {
-        timeout = null;
-        renderText();
-    }, 500);
 }
-
+/*
 function renderText() {
     let editor = document.getElementById('.ql-editor');
     if (!editor) {
@@ -112,6 +104,7 @@ function renderText() {
         shape.image(canvas);
     });
 }
+*/
 </script>
 
 
