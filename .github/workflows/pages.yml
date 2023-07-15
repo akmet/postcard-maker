@@ -26,6 +26,14 @@ jobs:
       - uses: actions/upload-pages-artifact@master
         with: 
           path: "dist/"
+      - name: Generate Electron Windows app
+        run: yarn electron-packager ./ --platform=win32 --arch=x64 --out=distElectron/
+      - name: Zip Apps
+        run: zip -r windows.zip distElectron
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: distElectron/*.zip
   deploy:
     needs: build
     permissions:
