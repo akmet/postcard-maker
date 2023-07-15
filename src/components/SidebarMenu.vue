@@ -3,10 +3,43 @@ import FileDrop from './FileDrop.vue';
 import stageZoom from '../helper/stageZoom';
 import switchTemplate from '../helper/switchTemplate';
 import handleFileChange from '../helper/handleFileChange';
-import { Layout } from '../types/types';
+import { Layout, TextData } from '../types/types';
 import exportImage from '../helper/exportImage';
 import updateGap from '../helper/updateGap';
 import TextModal from './TextModal.vue';
+import { useStageStore } from '../stores/stageStore';
+import Konva from 'konva';
+
+const store = useStageStore();
+const texts = store.texts as TextData[];
+function addText() {
+  const lastText = texts[texts.length - 1];
+  const id = (lastText?.id ?? 0) + 1;
+  console.log(id);
+  store.addText({
+    id: id,
+    text: new Konva.Text({
+      x: 200,
+      y: 600,
+      text: "Viele Grüße\nAus Blajoux",
+      fontSize: 40,
+      fontFamily: 'Arial',
+      fill: '#555',
+      width: 300,
+      padding: 5,
+      align: 'center',
+      draggable: true,
+    }).setAttr('textId', id).on('transform', ($event) => {
+      const text = $event.currentTarget as Konva.Text;
+      text.setAttrs({
+        width: Math.max(text.width() * text.scaleX(), 20),
+        height: Math.max(text.height() * text.scaleY(), 20),
+        scaleX: 1,
+        scaleY: 1,
+      });
+    }),
+  });
+}
 </script>
 
 <template>
@@ -43,7 +76,12 @@ import TextModal from './TextModal.vue';
 
       <hr class="col-span-2 w-full">
       <div class="col-span-2 grid grid-cols-2 gap-4">
-        <TextModal></TextModal>
+        <button @click="addText"
+          class="block text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button">
+          Neuer Text
+        </button>
+        <TextModal v-for="text of texts" :text-id="text.id" :text="text.text"></TextModal>
       </div>
 
       <hr class="col-span-2 w-full mt-auto">

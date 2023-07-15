@@ -36,29 +36,37 @@ export default function () {
             .on('mousedown', (evt) => handleStageMouseDown(evt))
 
     const layers = getStageElementsByTemplate();
-    const layerImage = new Konva.Layer({
-        name: "layer_image"
-    })
-        .add(
-            new Konva.Rect({
-                x: baseX,
-                y: baseY,
-                width: width,
-                height: height,
-                fill: "white",
-                stroke: 'black',
-                strokeWidth: 1,
-            })
-        )
-        .add(
-            new Konva.Transformer({
-                nodes: [],
-                rotateAnchorOffset: 60,
-                enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right']
-            })
-        )
+    const group_images = new Konva.Group({
+        name: "group_images"
+    });
+    stage.add(
+        new Konva.Layer()
+            .add(
+                new Konva.Rect({
+                    x: baseX,
+                    y: baseY,
+                    width: width,
+                    height: height,
+                    fill: "white",
+                    stroke: 'black',
+                    strokeWidth: 1,
+                })
+            )
+            .add(
+                new Konva.Transformer({
+                    nodes: [],
+                    rotateAnchorOffset: 60,
+                })
+            )
+            .add(group_images)
+            .add(
+                new Konva.Group({
+                    name: "group_texts"
+                }).setAttr('baseX', baseX).setAttr('baseY', baseY)
+            )
+    );
     for (let layer of layers) {
-        layerImage.add(
+        group_images.add(
             new Konva.Group({
                 name: layer.name,
                 clip: {
@@ -71,12 +79,6 @@ export default function () {
         )
 
     }
-    stage.add(layerImage);
-    stage.add(
-        new Konva.Layer({
-            name: "layer_text"
-        })
-    )
 
     stage.scaleX(scale);
     stage.scaleY(scale);

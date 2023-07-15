@@ -1,6 +1,6 @@
 import Konva from 'konva'
 import { defineStore } from 'pinia'
-import { Layout } from '../types/types';
+import { Layout, TextData } from '../types/types';
 
 export const useStageStore = defineStore('stage', {
     state: () => ({
@@ -11,6 +11,7 @@ export const useStageStore = defineStore('stage', {
             height: 1240,
         },
         layout: Layout.TwoByTwo,
+        texts: [] as TextData[]
     }),
 
     actions: {
@@ -22,6 +23,12 @@ export const useStageStore = defineStore('stage', {
         },
         setLayout(layout: Layout) {
             this.layout = layout;
+        },
+        addText(text: TextData) {
+            this.texts.push(text);
+            let group_texts = this.stage?.findOne((node: Node) => node instanceof Konva.Group && node.name() === 'group_texts') as Konva.Group;
+            group_texts.add(text.text);
+
         },
     },
 })

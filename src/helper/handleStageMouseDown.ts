@@ -19,7 +19,7 @@ export default function (event: Konva.KonvaEventObject<MouseEvent>) {
     if (target.getParent() instanceof Konva.Transformer) {
         return;
     }
-    if (target instanceof Konva.Image) {
+    if (target instanceof Konva.Image || target instanceof Konva.Text) {
         let layers = target.getStage()?.getLayers();
         if (layers) {
             attachNodeToTransformer(layers, target);

@@ -13,6 +13,7 @@ export default function (layers: Konva.Layer[], node?: Konva.Node) {
             }
             transformer.nodes([node]);
             layer.moveToTop();
+            transformer.moveToTop();
 
         } else {
             transformer.nodes([]);
