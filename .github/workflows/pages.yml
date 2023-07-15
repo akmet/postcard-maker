@@ -31,7 +31,7 @@ jobs:
       - name: Generate Electron Windows app
         run: yarn electron-packager ./ --platform=win32 --arch=x64 --out=distElectron/
       - name: Zip Apps
-        run: zip -r windows.zip distElectron
+        run: for i in distElectron/*; do zip -r "${i%/}.zip" "$i"; done
       - uses: actions/upload-artifact@v3
         with:
           name: artifacts
