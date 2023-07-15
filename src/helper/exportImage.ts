@@ -1,17 +1,16 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
 
-
 export default function (event: Event) {
     if (!(event.target instanceof HTMLSelectElement)) {
         return;
     }
     const method = event.target.value;
     event.target.value = "-1";
-    const filename = prompt("Dateiname ohne Dateiendung", "postkarte");
-    if (filename === null || filename.length < 3) {
-        return;
-    }
+
+    const now = new Date();
+    let filename = "Postkarte_" + now.toISOString().substring(0, 10) + '_' + now.toLocaleTimeString();
+
     const stage = useStageStore().stage as Konva.Stage;
 
     if (method === 'json') {
@@ -26,6 +25,13 @@ export default function (event: Event) {
         x: 1,
         y: 1,
     })
+    const transformers = stage.find((node: Node) => node instanceof Konva.Transformer) as Konva.Transformer[];
+
+    if (transformers) {
+        for (let transformer of transformers) {
+            transformer.nodes([]);
+        }
+    }
     stage.toDataURL({
         x: rect.x(),
         y: rect.y(),
@@ -39,4 +45,5 @@ export default function (event: Event) {
         }
     });
     stage.scale(scale);
+
 }
