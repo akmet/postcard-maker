@@ -2,6 +2,7 @@ import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
 import getStageElementsByTemplate from "./getStageElementsByTemplate";
 import handleStageMouseDown from "./handleStageMouseDown";
+import updateImageFile from "./updateImageFile";
 
 
 export default function () {
@@ -84,4 +85,9 @@ export default function () {
     stage.scaleY(scale);
     stage.draw();
     useStageStore().setStage(stage)
+    updateImageFile(1);
+    updateImageFile(2);
+    updateImageFile(3);
+    updateImageFile(4);
+    updateImageFile(5);
 }

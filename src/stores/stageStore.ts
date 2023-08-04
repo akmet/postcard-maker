@@ -11,7 +11,8 @@ export const useStageStore = defineStore('stage', {
             height: 1240,
         },
         layout: Layout.TwoByTwo,
-        texts: [] as TextData[]
+        texts: [] as TextData[],
+        border: 0,
     }),
 
     actions: {
@@ -28,7 +29,9 @@ export const useStageStore = defineStore('stage', {
             this.texts.push(text);
             let group_texts = this.stage?.findOne((node: Node) => node instanceof Konva.Group && node.name() === 'group_texts') as Konva.Group;
             group_texts.add(text.text);
-
+        },
+        setBorder(border: number) {
+            this.border = border;
         },
     },
 })

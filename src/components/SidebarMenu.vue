@@ -6,6 +6,7 @@ import handleFileChange from '../helper/handleFileChange';
 import { Layout, TextData } from '../types/types';
 import exportImage from '../helper/exportImage';
 import updateGap from '../helper/updateGap';
+import updateBorder from '../helper/updateBorder';
 import TextModal from './TextModal.vue';
 import { useStageStore } from '../stores/stageStore';
 import Konva from 'konva';
@@ -62,6 +63,9 @@ function addText() {
       </select>
       <label class="justify-self-start">Gap</label>
       <input id="gap" type="range" min="0" max="50" step="10" value="0" @input="updateGap" />
+
+      <label class="justify-self-start">Border</label>
+      <input id="border" type="range" min="0" max="50" step="10" value="0" @input="updateBorder" />
 
 
       <label class="justify-self-start">Zoom</label>

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@types/electron-prompt": "^1.6.1",
+    "@vueuse/core": "^10.3.0",
     "electron-prompt": "^1.7.0",
     "konva": "^9.2.0",
     "pinia": "^2.1.4",
