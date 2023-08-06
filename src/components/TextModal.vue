@@ -18,7 +18,7 @@
             </Selectic>
             <label>Größe</label>
             <input :value="text.fontSize()" type="range" min="30" max="500" step="2"
-                @input="event => text.fontSize(parseInt(event.target?.value))" />
+                @input="event => text.fontSize((event.target as HTMLInputElement).valueAsNumber)" />
             <label>Style</label>
             <Selectic :value="text.fontStyle()" :options="[
                 { id: 'normal', text: 'Normal', style: 'normal', weight: 'normal' },
@@ -37,17 +37,17 @@
             </Selectic>
             <label>Farbe Text</label>
             <input :value="text.fill()" type="color" class="aspect-square w-min"
-                @input="event => text.fill(event.target?.value)">
+                @input="event => text.fill((event.target as HTMLInputElement).value)">
             <label>Stärke Umrandung</label>
             <input :value="text.strokeWidth()" type="range" min="0" max="20" step="1"
-                @input="event => text.strokeWidth(parseInt(event.target?.value))" />
+                @input="event => text.strokeWidth((event.target as HTMLInputElement).valueAsNumber)" />
             <label>Farbe Umrandung</label>
             <input :value="text.stroke()" type="color" class="aspect-square w-min"
-                @input="event => text.stroke(event.target?.value)">
+                @input="event => text.stroke((event.target as HTMLInputElement).value)">
         </TwoColumns>
         <div class="pt-6 text-black text-2xl">
             <textarea :value="text.text()" class="w-full min-h-[8rem] h-32"
-                @input="event => text.text(event.target?.value)"></textarea>
+                @input="event => text.text((event.target as HTMLInputElement).value)"></textarea>
         </div>
     </div>
 </template>
@@ -93,7 +93,7 @@ onMounted(async () => {
             fontAvailable.push(font);
         }
     }
-    useEventListener(document, 'selectedTextNode', (e: Event) => {
+    useEventListener(document, 'selectedTextNode', (e: CustomEvent) => {
         text.value = e.detail;
     })
 })

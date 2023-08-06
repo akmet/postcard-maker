@@ -10,7 +10,6 @@ import updateBorder from '../helper/updateBorder';
 import TextModal from './TextModal.vue';
 import Accordian from './Accordian.vue';
 import TwoColumns from './TwoColumns.vue';
-import Button from './Button.vue';
 </script>
 
 <template>
