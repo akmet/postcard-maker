@@ -14,9 +14,9 @@ export default function (layers: Konva.Layer[], node?: Konva.Node) {
             transformer.nodes([node]);
             layer.moveToTop();
             transformer.moveToTop();
-
         } else {
             transformer.nodes([]);
         }
+        document.dispatchEvent(new CustomEvent("selectedTextNode", { detail: (node instanceof Konva.Text) ? node : null }));
     }
 }
