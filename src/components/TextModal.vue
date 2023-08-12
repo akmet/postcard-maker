@@ -1,31 +1,32 @@
 <template>
-    <div v-if="props.text" id="defaultModal" tabindex="-1" aria-hidden="false" class="flex flex-col place-items-center">
-        <hr class="w-full">
-        <TwoColumns>
-            <label>Schriftart</label>
-            <Selectic v-if="fontAvailable.length > 0" :options="fontAvailable" :value="props.text.fontFamily()" :params="{
-                formatOption: (option: any) => {
-                    return Object.assign({}, option, {
-                        style: 'font-family: ' + option.id + ';'
-                    });
-                },
-                formatSelection: (option: any) => {
-                    return Object.assign({}, option, {
-                        style: 'font-family: ' + option.id + ';'
-                    });
-                },
-            }" @change="(value: string) => props.text.fontFamily(value)">
-            </Selectic>
-            <label>Größe</label>
-            <input :value="props.text.fontSize()" type="range" min="30" max="500" step="2"
-                @input="event => props.text.fontSize((event.target as HTMLInputElement).valueAsNumber)" />
-            <label>Style</label>
-            <Selectic :value="props.text.fontStyle()" :options="[
-                { id: 'normal', text: 'Normal', style: 'normal', weight: 'normal' },
-                { id: 'bold', text: 'Fett', style: 'normal', weight: 'bold' },
-                { id: 'italic', text: 'Kursiv', style: 'italic', weight: 'normal' },
-            ]
-                " :params="{
+    <div>
+        <div v-if="text" id="defaultModal" tabindex="-1" aria-hidden="false" class="flex flex-col place-items-center">
+            <hr class="w-full">
+            <TwoColumns>
+                <label>Schriftart</label>
+                <Selectic v-if="fontAvailable.length > 0" :options="fontAvailable" :value="text.fontFamily()" :params="{
+                    formatOption: (option: any) => {
+                        return Object.assign({}, option, {
+                            style: 'font-family: ' + option.id + ';'
+                        });
+                    },
+                    formatSelection: (option: any) => {
+                        return Object.assign({}, option, {
+                            style: 'font-family: ' + option.id + ';'
+                        });
+                    },
+                }" @change="(value: string) => text.fontFamily(value) && update()">
+                </Selectic>
+                <label>Größe</label>
+                <input :value="text.fontSize()" type="range" min="30" max="500" step="2"
+                    @input="event => text.fontSize((event.target as HTMLInputElement).valueAsNumber)" @change="update()" />
+                <label>Style</label>
+                <Selectic :value="text.fontStyle()" :options="[
+                    { id: 'normal', text: 'Normal', style: 'normal', weight: 'normal' },
+                    { id: 'bold', text: 'Fett', style: 'normal', weight: 'bold' },
+                    { id: 'italic', text: 'Kursiv', style: 'italic', weight: 'normal' },
+                ]
+                    " :params="{
         formatOption: (option: any) => Object.assign({}, option, {
             style: 'font-weight: ' + option.weight + ';font-style: ' + option.style + ';'
         }),
@@ -33,37 +34,55 @@
             style: 'font-weight: ' + option.weight + ';font-style: ' + option.style + ';'
         }),
     }
-        " @change="(value: string) => props.text.fontStyle(value)">
-            </Selectic>
-            <label>Farbe Text</label>
-            <input :value="props.text.fill()" type="color" class="aspect-square w-min"
-                @input="event => props.text.fill((event.target as HTMLInputElement).value)">
-            <label>Stärke Umrandung</label>
-            <input :value="props.text.strokeWidth()" type="range" min="0" max="20" step="1"
-                @input="event => props.text.strokeWidth((event.target as HTMLInputElement).valueAsNumber)" />
-            <label>Farbe Umrandung</label>
-            <input :value="props.text.stroke()" type="color" class="aspect-square w-min"
-                @input="event => props.text.stroke((event.target as HTMLInputElement).value)">
-            <div class="col-span-2 text-black text-2xl">
-                <textarea :value="props.text.text()" class="w-full min-h-[8rem] h-32"
-                    @input="event => props.text.text((event.target as HTMLInputElement).value)"></textarea>
-            </div>
-            <Button class="col-span-2" type="danger" @on-click="destroyText">Text löschen</Button>
-        </TwoColumns>
-        <hr class="w-full">
+        " @change="(value: string) => text.fontStyle(value) && update()">
+                </Selectic>
+                <label>Farbe Text</label>
+                <input :value="text.fill()" type="color" class="aspect-square w-min"
+                    @input="event => text.fill((event.target as HTMLInputElement).value)" @change="update()">
+                <label>Stärke Umrandung</label>
+                <input :value="text.strokeWidth()" type="range" min="0" max="20" step="1"
+                    @input="event => text.strokeWidth((event.target as HTMLInputElement).valueAsNumber)"
+                    @change="update()" />
+                <label>Farbe Umrandung</label>
+                <input :value="text.stroke()" type="color" class="aspect-square w-min"
+                    @input="event => text.stroke((event.target as HTMLInputElement).value)" @change="update()">
+                <div class="col-span-2 text-black text-2xl">
+                    <textarea :value="text.text()" class="w-full min-h-[8rem] h-32"
+                        @input="event => text.text((event.target as HTMLInputElement).value)" @change="update()"></textarea>
+                </div>
+                <Button class="col-span-2" type="danger" @on-click="destroyText">Text löschen</Button>
+            </TwoColumns>
+            <hr class="w-full">
+        </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import Selectic from 'selectic';
 import TwoColumns from './TwoColumns.vue';
 import Button from './Button.vue';
+import { useStageStore } from '../stores/stageStore';
 import { usePersistentStore } from '../stores/persistentStore';
+import Konva from 'konva';
 
 const props = defineProps(['text']);
 let fontAvailable = [] as String[];
 const emit = defineEmits(['reloadTexts']);
+
+const text = computed(() => {
+    const node = useStageStore().selectedNode;
+    if (node instanceof Konva.Text) {
+        return node;
+    }
+})
+
+function update() {
+    const node = text.value;
+    if (node) {
+        usePersistentStore().updateText(node.id(), node.toJSON())
+    }
+}
 
 onMounted(async () => {
     //getFonts();

@@ -39,6 +39,12 @@ export const usePersistentStore = defineStore('persistentStore', {
             this.changed(3);
             this.texts = this.texts.filter(i => i.id !== id);
         },
+        selectText(id: string) {
+            this.texts.forEach((value: TextData) => value.selected = value.id === id)
+        },
+        selectedText() {
+            return this.texts.find((text: TextData) => text.selected === true);
+        },
         getImage(index: number) {
             return this._getImage(index).image;
         },

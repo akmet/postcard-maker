@@ -11,6 +11,7 @@ export const useStageStore = defineStore('stage', {
         group_texts: null as Konva.Group | null,
         group_images: null as Konva.Group | null,
         background_rect: null as Konva.Rect | null,
+        selectedNode: undefined as Konva.Node | undefined,
     }),
 
     actions: {
@@ -25,6 +26,9 @@ export const useStageStore = defineStore('stage', {
         },
         setBackgroundRect(rect: Konva.Rect) {
             this.background_rect = rect;
+        },
+        selectNode(node: Konva.Node | undefined) {
+            this.selectedNode = node;
         }
     },
 })

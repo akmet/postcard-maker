@@ -1,4 +1,5 @@
 import Konva from "konva";
+import { useStageStore } from "../stores/stageStore";
 
 
 export default function (layers: Konva.Layer[], node?: Konva.Node) {
@@ -17,7 +18,6 @@ export default function (layers: Konva.Layer[], node?: Konva.Node) {
         } else {
             transformer.nodes([]);
         }
-        document.dispatchEvent(new CustomEvent("selectedTextNode", { detail: (node instanceof Konva.Text) ? node : null }));
-
+        useStageStore().selectNode(node);
     }
 }

@@ -3,7 +3,6 @@ import { usePersistentStore } from "../stores/persistentStore";
 import { useStageStore } from "../stores/stageStore";
 import { ImageData } from "../types/types";
 import { KonvaEventObject } from "konva/lib/Node";
-import { toRaw } from "vue";
 
 export function createImage(target: HTMLInputElement, index: number) {
     if (target.files?.length !== 1) {
@@ -44,7 +43,6 @@ export function loadImage(index: number) {
                     usePersistentStore().updateImage(index, attributes);
                 });
         }
-        console.log(toRaw(imageData.attributes));
         konvaImage
             .image(img)
             .setAttrs({
