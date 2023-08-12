@@ -1,45 +1,34 @@
 import Konva from "konva";
-import { useImageStore } from "../stores/imageStore";
+import { usePersistentStore } from "../stores/persistentStore";
 import { useStageStore } from "../stores/stageStore";
 import { ImageData } from "../types/types";
 import { KonvaEventObject } from "konva/lib/Node";
+import { toRaw } from "vue";
 
-export function createImage(index: number) {
+export function createImage(target: HTMLInputElement, index: number) {
+    if (target.files?.length !== 1) {
+        throw new Error("Error: files hat nicht ein Element");
+    }
 
-    const img = new window.Image();
-
-    img.src = useImageStore().getImage(index);
-
-    img.onload = () => {
-        const stage = useStageStore().stage as Konva.Stage;
-
-        let group = stage.findOne((node: Node) => node instanceof Konva.Group && node.name() === 'Bild ' + index) as Konva.Group;
-        let image = group.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
-        if (!image) {
-            image = new Konva.Image({
-                x: group.clipX(),
-                y: group.clipY(),
-                draggable: true,
-                image: undefined,
-            })
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        const base64String = reader.result;
+        if (typeof base64String !== 'string') {
+            throw new Error("Error: Image not string");
         }
 
-        image.image(img);
-        image.width(group.clipWidth());
-        image.height((group.clipWidth() / img.width) * img.height);
-        image.setAttrs({ imgWidth: img.width, imgHeight: img.height });
+        usePersistentStore().setImage(index, base64String, {});
+        usePersistentStore().updateImage(index, { scaleX: 1, scaleY: 1 });
+        loadImage(index);
     };
-
-    //const attributes = '{"attrs":{"x":200,"y":600,"text":"Viele Grüße","fontSize":80,"fontFamily":"American Typewriter","fill":"#555555","width":300,"padding":5,"align":"center","stroke":"#ffffff","strokeWidth":0,"draggable":true},"className":"Image"}'
-
-    //loadImage(useImageStore().create(uuidv4(), attributes));
+    reader.readAsDataURL(target.files[0]);
 }
 
 export function loadImage(index: number) {
 
     const img = new window.Image();
-    const imageStore = useImageStore();
-    const imageData = imageStore.get(index);
+    const persistentStore = usePersistentStore();
+    const imageData = persistentStore._getImage(index);
     img.src = imageData.image;
 
     img.onload = () => {
@@ -48,9 +37,14 @@ export function loadImage(index: number) {
         let group = stage.findOne((node: Node) => node instanceof Konva.Group && node.name() === 'Bild ' + index) as Konva.Group;
         let konvaImage = group.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
         if (!konvaImage) {
-            konvaImage = new Konva.Image({ draggable: true, image: undefined });
+            konvaImage = new Konva.Image({ draggable: true, image: undefined })
+                .on('dragend transformend', ($event: KonvaEventObject<any>) => {
+                    const konvaImage = $event.currentTarget as Konva.Image;
+                    const { image, ...attributes } = konvaImage.getAttrs();
+                    usePersistentStore().updateImage(index, attributes);
+                });
         }
-
+        console.log(toRaw(imageData.attributes));
         konvaImage
             .image(img)
             .setAttrs({
@@ -62,14 +56,9 @@ export function loadImage(index: number) {
                 imgHeight: img.height,
                 ...imageData.attributes,
             })
-            .on('dragend transformend', ($event: KonvaEventObject<any>) => {
-                const konvaImage = $event.currentTarget as Konva.Image;
-                const { image, ...attributes } = konvaImage.getAttrs();
-                useImageStore().update(index, attributes);
-            })
 
         const { image, ...attributes } = konvaImage.getAttrs();
-        imageStore.update(index, attributes);
+        persistentStore.setImage(index, null, attributes);
 
         group.add(konvaImage);
     };
@@ -81,6 +70,11 @@ export function destroyImage(image: ImageData) {
         throw new Error("Cannot destroy image when stage not set-up");
     }
     group_images.findOne((node: Konva.Node) => node instanceof Konva.Image && node.name() === 'Bild ' + image.index).destroy();
-    useImageStore().destroy(image.index);
+    usePersistentStore().destroyImage(image.index);
 }
 
+export function loadImages() {
+    for (let index of [1, 2, 3, 4, 5]) {
+        loadImage(index);
+    }
+}

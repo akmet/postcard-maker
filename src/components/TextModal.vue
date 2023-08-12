@@ -59,7 +59,7 @@ import { onMounted } from 'vue';
 import Selectic from 'selectic';
 import TwoColumns from './TwoColumns.vue';
 import Button from './Button.vue';
-import { useTextStore } from '../stores/textStore';
+import { usePersistentStore } from '../stores/persistentStore';
 
 const props = defineProps(['text']);
 let fontAvailable = [] as String[];
@@ -95,7 +95,7 @@ onMounted(async () => {
 })
 
 function destroyText() {
-    useTextStore().destroy(props.text);
+    usePersistentStore().destroyText(props.text);
     emit('reloadTexts');
 }
 </script>

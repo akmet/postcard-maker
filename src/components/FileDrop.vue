@@ -9,13 +9,13 @@
 </template>
 
 <script lang="ts" setup>
-import handleFileChange from '../helper/handleFileChange';
+import { createImage } from '../helper/imageHelper';
 const props = defineProps(['item'])
 
 
 function changedFile($event: Event) {
     if ($event.target instanceof HTMLInputElement) {
-        handleFileChange($event.target, props.item)
+        createImage($event.target, props.item)
     }
 }
 </script>

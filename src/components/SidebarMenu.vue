@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import FileDrop from './FileDrop.vue';
 import switchTemplate from '../helper/switchTemplate';
-import handleFileChange from '../helper/handleFileChange';
 import { createText } from '../helper/textHelper';
 import { Layout, TextData } from '../types/types';
 import exportImage from '../helper/exportImage';
@@ -10,7 +9,7 @@ import updateBorder from '../helper/updateBorder';
 import TextModal from './TextModal.vue';
 import TwoColumns from './TwoColumns.vue';
 import Button from './Button.vue';
-import { useTextStore } from '../stores/textStore';
+import { usePersistentStore } from '../stores/persistentStore';
 import Konva from 'konva';
 import attachNodeToTransformer from '../helper/attachNodeToTransformer';
 import { ref } from 'vue';
@@ -23,8 +22,10 @@ const selectedText = ref();
 reloadTexts();
 
 function reloadTexts() {
-  texts.value = useTextStore().texts as TextData[];
+  texts.value = usePersistentStore().texts as TextData[];
 }
+
+const persistentStore = usePersistentStore();
 
 const currentPage = ref('');
 function switchPage(page: string) {
@@ -63,22 +64,21 @@ function clickedOnText(id: string) {
         <TwoColumns>
           <label class="justify-self-start">Layout</label>
           <select class="dark:bg-gray-800" @change="switchTemplate">
-            <option :value="Layout.TwoByTwo">2+2</option>
-            <option :value="Layout.TwoByThree">2+3</option>
-            <option :value="Layout.ThreeByTwo">3+2</option>
+            <option :value="Layout.TwoByTwo" :selected="persistentStore.layout === Layout.TwoByTwo">2+2</option>
+            <option :value="Layout.TwoByThree" :selected="persistentStore.layout === Layout.TwoByThree">2+3</option>
+            <option :value="Layout.ThreeByTwo" :selected="persistentStore.layout === Layout.ThreeByTwo">3+2</option>
           </select>
           <label class="justify-self-start">Gap</label>
-          <input id="gap" type="range" min="0" max="50" step="10" value="0" @input="updateGap" />
+          <input id="gap" type="range" min="0" max="50" step="10" :value="persistentStore.gap" @input="updateGap" />
 
           <label class="justify-self-start">Border</label>
-          <input id="border" type="range" min="0" max="50" step="10" value="0" @input="updateBorder" />
+          <input id="border" type="range" min="0" max="50" step="10" :value="persistentStore.border"
+            @input="updateBorder" />
         </TwoColumns>
       </TabElement>
       <TabElement :visible="currentPage === 'images'">
         <TwoColumns>
-          <FileDrop v-for="item in [1, 2, 3, 4, 5]" :key="item" :item="item"
-            @changed-file="(data) => handleFileChange(data.$event.target, data.id)">
-          </FileDrop>
+          <FileDrop v-for="item in [1, 2, 3, 4, 5]" :key="item" :item="item"></FileDrop>
         </TwoColumns>
       </TabElement>
       <TabElement :visible="currentPage === 'texts'">

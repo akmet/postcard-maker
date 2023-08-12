@@ -1,11 +1,9 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
-import { useTextStore } from "../stores/textStore";
 import getStageElementsByTemplate from "./getStageElementsByTemplate";
 import handleStageMouseDown from "./handleStageMouseDown";
-import { TextData } from "../types/types";
-import { loadText } from "./textHelper";
-import { loadImage } from "./imageHelper";
+import { initializeTexts } from "./textHelper";
+import { loadImages } from "./imageHelper";
 
 
 export default function () {
@@ -47,18 +45,21 @@ export default function () {
         name: "group_texts"
     }).setAttr('baseX', baseX).setAttr('baseY', baseY);
 
+    const background_rect = new Konva.Rect({
+        id: "background_rect",
+        x: baseX,
+        y: baseY,
+        width: width,
+        height: height,
+        fill: "white",
+        stroke: 'black',
+        strokeWidth: 1,
+    });
+
     stage.add(
         new Konva.Layer()
             .add(
-                new Konva.Rect({
-                    x: baseX,
-                    y: baseY,
-                    width: width,
-                    height: height,
-                    fill: "white",
-                    stroke: 'black',
-                    strokeWidth: 1,
-                })
+                background_rect
             )
             .add(
                 new Konva.Transformer({
@@ -81,7 +82,6 @@ export default function () {
                 }
             }).setAttr('baseX', baseX).setAttr('baseY', baseY)
         )
-
     }
 
     stage.scaleX(scale);
@@ -90,14 +90,8 @@ export default function () {
     useStageStore().setStage(stage)
     useStageStore().setGroupTexts(group_texts);
     useStageStore().setGroupImages(group_images);
+    useStageStore().setBackgroundRect(background_rect);
 
-
-    for (let index of [1, 2, 3, 4, 5]) {
-        loadImage(index);
-    }
-
-    const texts = useTextStore().texts as TextData[];
-    for (let text of texts) {
-        loadText(text);
-    }
+    loadImages();
+    initializeTexts();
 }

@@ -1,6 +1,7 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
 import getStageElementsByTemplate from "./getStageElementsByTemplate";
+import { usePersistentStore } from "../stores/persistentStore";
 
 
 export default function (event: Event) {
@@ -12,7 +13,7 @@ export default function (event: Event) {
     const newGap = Number.parseInt(target.value);
     const store = useStageStore();
     const stage = store.stage as Konva.Stage;
-    store.setGap(newGap);
+    usePersistentStore().setGap(newGap);
 
     const layers = getStageElementsByTemplate();
 

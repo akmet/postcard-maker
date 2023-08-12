@@ -1,6 +1,7 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
 import getStageElementsByTemplate from "./getStageElementsByTemplate";
+import { usePersistentStore } from "../stores/persistentStore";
 
 
 export default function (event: Event) {
@@ -9,12 +10,12 @@ export default function (event: Event) {
         throw new Error("target is not select element");
     }
     const layout = Number.parseInt(target.value);
-    const store = useStageStore();
-    if (store.layout == layout) {
+    const persistentStore = usePersistentStore();
+    if (persistentStore.layout == layout) {
         throw new Error("cannot change layout to current layout")
     }
-    store.setLayout(layout);
-    const stage = store.stage as Konva.Stage;
+    persistentStore.setLayout(layout);
+    const stage = useStageStore().stage as Konva.Stage;
 
     const layers = getStageElementsByTemplate();
     for (let layer of layers) {

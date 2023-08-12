@@ -1,15 +1,17 @@
+import { usePersistentStore } from "../stores/persistentStore";
 import { useStageStore } from "../stores/stageStore";
 import { Layout } from "../types/types";
 
 
 export default function () {
 
-    let store = useStageStore();
-    const gap = store.gap as number;
-    const border = store.border as number;
-    const width = store.dimensions.width
-    const height = store.dimensions.height
-    const layout = store.layout
+    const persistentStore = usePersistentStore();
+    const stageStore = useStageStore();
+    const gap = persistentStore.gap as number;
+    const border = persistentStore.border as number;
+    const layout = persistentStore.layout
+    const width = stageStore.dimensions.width
+    const height = stageStore.dimensions.height
 
     if (layout === Layout.TwoByThree) {
         return [
