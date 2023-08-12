@@ -17,7 +17,6 @@ export default function (layers: Konva.Layer[], node?: Konva.Node) {
         } else {
             transformer.nodes([]);
         }
-        console.log(node instanceof Konva.Text);
         document.dispatchEvent(new CustomEvent("selectedTextNode", { detail: (node instanceof Konva.Text) ? node : null }));
 
     }

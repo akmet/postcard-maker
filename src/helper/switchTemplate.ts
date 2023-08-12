@@ -6,14 +6,12 @@ import getStageElementsByTemplate from "./getStageElementsByTemplate";
 export default function (event: Event) {
     const target = event.target;
     if (!(target instanceof HTMLSelectElement)) {
-        console.log("target is not select element");
-        return;
+        throw new Error("target is not select element");
     }
     const layout = Number.parseInt(target.value);
     const store = useStageStore();
     if (store.layout == layout) {
-        console.log("cannot change layout to current layout")
-        return;
+        throw new Error("cannot change layout to current layout")
     }
     store.setLayout(layout);
     const stage = store.stage as Konva.Stage;

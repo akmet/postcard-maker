@@ -4,8 +4,7 @@ import { useStageStore } from "../stores/stageStore";
 export default function (factor: number) {
     const stage = useStageStore().stage
     if (!(stage instanceof Konva.Stage)) {
-        console.log("stage is not an stage");
-        return;
+        throw new Error("stage is not an stage");
     }
 
     stage.scale({
