@@ -25,17 +25,7 @@ jobs:
         run: yarn build
       - uses: actions/upload-pages-artifact@master
         with: 
-          path: "dist/"          
-#      - name: Add wine
-#        run: sudo dpkg --add-architecture i386 && wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - &&sudo add-apt-repository ppa:cybermax-dexter/sdl2-backport && sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main" && sudo apt install --install-recommends winehq-stable
-#      - name: Generate Electron Windows app
-#        run: yarn electron-packager ./ --platform=win32 --arch=x64 --out=distElectron/
-#      - name: Zip Apps
-#        run: for i in distElectron/*; do zip -r "${i%/}.zip" "$i"; done
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: artifacts
-#          path: distElectron/*.zip
+          path: "dist/"
   deploy:
     needs: build
     permissions:
