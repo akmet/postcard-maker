@@ -1,9 +1,8 @@
 import Konva from "konva";
 import attachNodeToTransformer from "./attachNodeToTransformer";
 
-export default function (event: Konva.KonvaEventObject<MouseEvent>) {
+export default function (target: Konva.Stage | Konva.Shape) {
 
-    let target = event.target;
     if (!(target instanceof Konva.Node)) {
         return;
     }

@@ -1,13 +1,7 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
 
-export default function (event: Event) {
-    if (!(event.target instanceof HTMLSelectElement)) {
-        return;
-    }
-    const method = event.target.value;
-    event.target.value = "-1";
-
+export default function (method: string) {
     const now = new Date();
     let filename = "Postkarte_" + now.toISOString().substring(0, 10) + '_' + now.toLocaleTimeString();
 

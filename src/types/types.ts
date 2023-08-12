@@ -1,5 +1,3 @@
-import Konva from "konva"
-
 export enum Layout {
     TwoByTwo = 0,
     TwoByThree = 1,
@@ -7,14 +5,14 @@ export enum Layout {
 };
 
 export type ImageData = {
-    name: string,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
+    index: number,
+    attributes: object,
+    image: string,
+    selected: boolean,
 }
 
 export type TextData = {
-    id: number,
-    text: Konva.Text,
+    id: string,
+    selected: boolean,
+    attributes: string
 }

@@ -1,8 +1,11 @@
 import Konva from "konva";
 import { useStageStore } from "../stores/stageStore";
+import { useTextStore } from "../stores/textStore";
 import getStageElementsByTemplate from "./getStageElementsByTemplate";
 import handleStageMouseDown from "./handleStageMouseDown";
-import updateImageFile from "./updateImageFile";
+import { TextData } from "../types/types";
+import { loadText } from "./textHelper";
+import { loadImage } from "./imageHelper";
 
 
 export default function () {
@@ -34,12 +37,16 @@ export default function () {
             height: stageContainer.offsetHeight,
             draggable: true,
         })
-            .on('mousedown', (evt) => handleStageMouseDown(evt))
+            .on('mousedown', (evt) => handleStageMouseDown(evt.target))
 
     const layers = getStageElementsByTemplate();
     const group_images = new Konva.Group({
         name: "group_images"
     });
+    const group_texts = new Konva.Group({
+        name: "group_texts"
+    }).setAttr('baseX', baseX).setAttr('baseY', baseY);
+
     stage.add(
         new Konva.Layer()
             .add(
@@ -60,11 +67,7 @@ export default function () {
                 })
             )
             .add(group_images)
-            .add(
-                new Konva.Group({
-                    name: "group_texts"
-                }).setAttr('baseX', baseX).setAttr('baseY', baseY)
-            )
+            .add(group_texts)
     );
     for (let layer of layers) {
         group_images.add(
@@ -85,9 +88,16 @@ export default function () {
     stage.scaleY(scale);
     stage.draw();
     useStageStore().setStage(stage)
-    updateImageFile(1);
-    updateImageFile(2);
-    updateImageFile(3);
-    updateImageFile(4);
-    updateImageFile(5);
+    useStageStore().setGroupTexts(group_texts);
+    useStageStore().setGroupImages(group_images);
+
+
+    for (let index of [1, 2, 3, 4, 5]) {
+        loadImage(index);
+    }
+
+    const texts = useTextStore().texts as TextData[];
+    for (let text of texts) {
+        loadText(text);
+    }
 }

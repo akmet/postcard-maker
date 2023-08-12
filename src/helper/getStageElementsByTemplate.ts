@@ -1,8 +1,8 @@
 import { useStageStore } from "../stores/stageStore";
-import { ImageData, Layout } from "../types/types";
+import { Layout } from "../types/types";
 
 
-export default function (): ImageData[] {
+export default function () {
 
     let store = useStageStore();
     const gap = store.gap as number;
