@@ -11,10 +11,14 @@ export default function (event: Event) {
         return;
     }
     const newBorder = Number.parseInt(target.value);
-    const store = useStageStore();
-    const stage = store.stage as Konva.Stage;
     usePersistentStore().setBorder(newBorder);
 
+    reloadBorder();
+}
+
+export function reloadBorder() {
+
+    const stage = useStageStore().stage as Konva.Stage;
     const layers = getStageElementsByTemplate();
 
     for (let layer of layers) {

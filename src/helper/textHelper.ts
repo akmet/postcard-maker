@@ -43,7 +43,7 @@ export function destroyText(text: TextData) {
     if (!group_texts) {
         throw new Error("Cannot load text when stage not set-up");
     }
-    group_texts.findOne((node: Konva.Node) => node instanceof Konva.Text && node.id() === text.id).destroy();
+    group_texts.findOne((node: Konva.Node) => node instanceof Konva.Text && node.id() === text.id)?.destroy();
     usePersistentStore().destroyText(text.id);
 }
 

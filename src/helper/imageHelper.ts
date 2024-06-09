@@ -36,12 +36,12 @@ export function loadImage(index: number) {
         let group = stage.findOne((node: Node) => node instanceof Konva.Group && node.name() === 'Bild ' + index) as Konva.Group;
         let konvaImage = group.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
         if (!konvaImage) {
-            konvaImage = new Konva.Image({ draggable: true, image: undefined })
-                .on('dragend transformend', ($event: KonvaEventObject<any>) => {
-                    const konvaImage = $event.currentTarget as Konva.Image;
-                    const { image, ...attributes } = konvaImage.getAttrs();
-                    usePersistentStore().updateImage(index, attributes);
-                });
+            konvaImage = new Konva.Image({ draggable: true, image: undefined });
+            konvaImage.on('dragend transformend', ($event: KonvaEventObject<any>) => {
+                const konvaImage = $event.currentTarget as Konva.Image;
+                const { image, ...attributes } = konvaImage.getAttrs();
+                usePersistentStore().updateImage(index, attributes);
+            });
         }
         konvaImage
             .image(img)
@@ -67,7 +67,7 @@ export function destroyImage(image: ImageData) {
     if (!group_images) {
         throw new Error("Cannot destroy image when stage not set-up");
     }
-    group_images.findOne((node: Konva.Node) => node instanceof Konva.Image && node.name() === 'Bild ' + image.index).destroy();
+    group_images.findOne((node: Konva.Node) => node instanceof Konva.Image && node.name() === 'Bild ' + image.index)?.destroy();
     usePersistentStore().destroyImage(image.index);
 }
 

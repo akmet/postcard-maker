@@ -14,18 +14,19 @@
     "@tauri-apps/cli": "^1.5.6",
     "@types/uuid": "^9.0.2",
     "@vitejs/plugin-vue": "^4.1.0",
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.2",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.12",
-    "vue-tsc": "^1.4.2",
     "@vueuse/core": "^10.3.0",
+    "autoprefixer": "^10.4.14",
     "konva": "^9.2.0",
     "pinia": "^2.1.4",
+    "postcss": "^8.4.31",
     "selectic": "^3.0.19",
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.0.2",
     "uuid": "^9.0.0",
+    "vite": "^4.4.12",
     "vue": "^3.2.47",
-    "vue-konva": "^3.0.2"
-  }
+    "vue-konva": "^3.0.2",
+    "vue-tsc": "^1.4.2"
+  },
+  "dependencies": {}
 }

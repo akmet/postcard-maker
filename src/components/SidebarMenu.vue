@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import ImageDrop from './ImageDrop.vue';
 import FileDrop from './FileDrop.vue';
 import switchTemplate from '../helper/switchTemplate';
 import { createText } from '../helper/textHelper';
@@ -16,13 +17,17 @@ import { ref } from 'vue';
 import TabElement from './TabElement.vue';
 import TabHeader from './TabHeader.vue';
 import { useStageStore } from '../stores/stageStore';
+import { jsonExport, jsonImport } from '../helper/persistentJson';
 
 const texts = ref();
 const selectedText = ref();
 reloadTexts();
 
 function reloadTexts() {
+  console.log('reloading texts in sidebarmenu');
+  selectedText.value = null;
   texts.value = usePersistentStore().texts as TextData[];
+  console.log('updated texts.value successfully');
 }
 
 const persistentStore = usePersistentStore();
@@ -40,6 +45,7 @@ function clickedOnText(id: string) {
   const stage = useStageStore().stage as Konva.Stage;
   attachNodeToTransformer(stage.getLayers(), stage.findOne((node: Konva.Node) => node instanceof Konva.Text && node.id() === id) as Konva.Text)
 }
+
 </script>
 
 <template>
@@ -50,7 +56,7 @@ function clickedOnText(id: string) {
       class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800 flex flex-col gap-2 dark:text-white content-start">
 
       <div class="flex justify-between items-center mb-2">
-        <img class="h-8 rounded-full" src="/favicon.jpg">
+        <img class="h-8 rounded-lg" src="/postcard.svg">
         <div class="text-xl flex-grow text-center">PostkartenTool</div>
       </div>
       <TabHeader :selected="currentPage" :titles="[
@@ -78,7 +84,7 @@ function clickedOnText(id: string) {
       </TabElement>
       <TabElement :visible="currentPage === 'images'">
         <TwoColumns>
-          <FileDrop v-for="item in [1, 2, 3, 4, 5]" :key="item" :item="item"></FileDrop>
+          <ImageDrop v-for="item in [1, 2, 3, 4, 5]" :key="item" :item="item"></ImageDrop>
         </TwoColumns>
       </TabElement>
       <TabElement :visible="currentPage === 'texts'">
@@ -92,7 +98,12 @@ function clickedOnText(id: string) {
       <TabElement :visible="currentPage === 'export'">
         <TwoColumns>
           <Button type="green" @click="exportImage('picture')">Bild</Button>
-          <Button @click="exportImage('json')">JSON</Button>
+          <Button @click="jsonExport()">JSON</Button>
+        </TwoColumns>
+        <TwoColumns>
+          <FileDrop text="JSON importieren" identifier="dropzone-file-import" @some-event="jsonImport">
+          </FileDrop>
+          <Button @click="persistentStore.clear()">Neu</Button>
         </TwoColumns>
       </TabElement>
 

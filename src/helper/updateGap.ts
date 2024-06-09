@@ -11,9 +11,12 @@ export default function (event: Event) {
         return;
     }
     const newGap = Number.parseInt(target.value);
-    const store = useStageStore();
-    const stage = store.stage as Konva.Stage;
     usePersistentStore().setGap(newGap);
+    reloadGap();
+}
+
+export function reloadGap() {
+    const stage = useStageStore().stage as Konva.Stage;
 
     const layers = getStageElementsByTemplate();
 

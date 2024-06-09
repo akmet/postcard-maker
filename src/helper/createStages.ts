@@ -28,14 +28,14 @@ export default function () {
     const baseX = (stageContainer.offsetWidth - (width * scale)) / 2;
     const baseY = (stageContainer.offsetHeight - (height * scale)) / 2;
 
-    let stage =
-        new Konva.Stage({
-            container: stageContainer,
-            width: stageContainer.offsetWidth,
-            height: stageContainer.offsetHeight,
-            draggable: true,
-        })
-            .on('mousedown', (evt) => handleStageMouseDown(evt.target))
+    let stage = new Konva.Stage({
+        container: stageContainer,
+        width: stageContainer.offsetWidth,
+        height: stageContainer.offsetHeight,
+        draggable: true,
+    });
+
+    stage.on('mousedown', (evt) => handleStageMouseDown(evt.target))
 
     const layers = getStageElementsByTemplate();
     const group_images = new Konva.Group({

@@ -15,11 +15,12 @@
                             style: 'font-family: ' + option.id + ';'
                         });
                     },
-                }" @change="(value: string) => text.fontFamily(value) && update()">
+                }" @change="(value: string) => text?.fontFamily(value) && update()">
                 </Selectic>
                 <label>Größe</label>
                 <input :value="text.fontSize()" type="range" min="30" max="500" step="2"
-                    @input="event => text.fontSize((event.target as HTMLInputElement).valueAsNumber)" @change="update()" />
+                    @input="event => text?.fontSize((event.target as HTMLInputElement).valueAsNumber)"
+                    @change="update()" />
                 <label>Style</label>
                 <Selectic :value="text.fontStyle()" :options="[
                     { id: 'normal', text: 'Normal', style: 'normal', weight: 'normal' },
@@ -27,28 +28,29 @@
                     { id: 'italic', text: 'Kursiv', style: 'italic', weight: 'normal' },
                 ]
                     " :params="{
-        formatOption: (option: any) => Object.assign({}, option, {
-            style: 'font-weight: ' + option.weight + ';font-style: ' + option.style + ';'
-        }),
-        formatSelection: (option: any) => Object.assign({}, option, {
-            style: 'font-weight: ' + option.weight + ';font-style: ' + option.style + ';'
-        }),
-    }
-        " @change="(value: string) => text.fontStyle(value) && update()">
+                        formatOption: (option: any) => Object.assign({}, option, {
+                            style: 'font-weight: ' + option.weight + ';font-style: ' + option.style + ';'
+                        }),
+                        formatSelection: (option: any) => Object.assign({}, option, {
+                            style: 'font-weight: ' + option.weight + ';font-style: ' + option.style + ';'
+                        }),
+                    }
+                        " @change="(value: string) => text?.fontStyle(value) && update()">
                 </Selectic>
                 <label>Farbe Text</label>
                 <input :value="text.fill()" type="color" class="aspect-square w-min"
-                    @input="event => text.fill((event.target as HTMLInputElement).value)" @change="update()">
+                    @input="event => text?.fill((event.target as HTMLInputElement).value)" @change="update()">
                 <label>Stärke Umrandung</label>
                 <input :value="text.strokeWidth()" type="range" min="0" max="20" step="1"
-                    @input="event => text.strokeWidth((event.target as HTMLInputElement).valueAsNumber)"
+                    @input="event => text?.strokeWidth((event.target as HTMLInputElement).valueAsNumber)"
                     @change="update()" />
                 <label>Farbe Umrandung</label>
                 <input :value="text.stroke()" type="color" class="aspect-square w-min"
-                    @input="event => text.stroke((event.target as HTMLInputElement).value)" @change="update()">
+                    @input="event => text?.stroke((event.target as HTMLInputElement).value)" @change="update()">
                 <div class="col-span-2 text-black text-2xl">
                     <textarea :value="text.text()" class="w-full min-h-[8rem] h-32"
-                        @input="event => text.text((event.target as HTMLInputElement).value)" @change="update()"></textarea>
+                        @input="event => text?.text((event.target as HTMLInputElement).value)"
+                        @change="update()"></textarea>
                 </div>
                 <Button class="col-span-2" type="danger" @on-click="destroyText">Text löschen</Button>
             </TwoColumns>
