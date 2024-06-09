@@ -97,18 +97,25 @@ function clickedOnText(id: string) {
       </TabElement>
       <TabElement :visible="currentPage === 'export'">
         <TwoColumns>
-          <Button type="green" @click="exportImage('picture')">Bild</Button>
-          <Button @click="jsonExport()">JSON</Button>
+          <label>Datei&nbsp;öffnen:</label>
         </TwoColumns>
         <TwoColumns>
-          <FileDrop text="JSON importieren" identifier="dropzone-file-import" @some-event="jsonImport">
-          </FileDrop>
           <Button @click="persistentStore.clear()">Neu</Button>
+          <FileDrop text="JSON importieren" identifier="dropzone-file-import" @some-event="jsonImport"></FileDrop>
+        </TwoColumns>
+        <TwoColumns>
+          <label>Datei&nbsp;speichern:</label>
+        </TwoColumns>
+        <TwoColumns>
+          <Button @click="exportImage('picture')">PNG</Button>
+          <Button @click="jsonExport()">JSON</Button>
         </TwoColumns>
       </TabElement>
 
       <TextModal class="mt-auto" :text="selectedText" @reload-texts="reloadTexts">
       </TextModal>
+      <span class="text-center">Contribute on <a class="text-blue-500" href='https://github.com/akmet/postcard-maker'
+          target="_blank">GitHub</a>.</span>
     </div>
   </aside>
 </template>
