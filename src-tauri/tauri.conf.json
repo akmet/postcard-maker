@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "PostkartenTool2",
-    "version": "0.1.0"
+    "version": "__VERSION__"
   },
   "tauri": {
     "allowlist": {
