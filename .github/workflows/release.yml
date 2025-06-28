@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - '*.*.*'
   workflow_dispatch:
 
 jobs:
@@ -46,16 +46,28 @@ jobs:
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
       - name: install frontend dependencies
-        run: yarn install # change this to npm, pnpm or bun depending on which one you use.
+        run: yarn install
+
+      - name: build frontend
+        run: yarn build
 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          # Project Initialization
+          distPath: "../dist"
+          iconPath: "../dist"
+          bundleIdentifier: "de.evjs.postkartentool"
+          appName: "PostkartenTool2"
+          appVersion: ${{ github.ref_name }}
+
+          # Build Options
+          args: ${{ matrix.args }}
+
+          # Release Configuration
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
-          args: ${{ matrix.args }}
-          appVersion: ${{ github.ref_name }}
