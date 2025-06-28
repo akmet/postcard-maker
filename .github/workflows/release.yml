@@ -1,4 +1,5 @@
 name: Release
+
 on:
   push:
     tags:
@@ -53,9 +54,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           # Project Initialization
-          projectPath: "tauri-src"
-          distPath: "../dist"
-          iconPath: "../public/postcard.png"
+          #projectPath: "tauri-src"
+          #distPath: "../dist"
+          iconPath: "public/postcard.png"
           bundleIdentifier: "de.evjs.postkartentool"
           appName: "PostkartenTool2"
           appVersion: ${{ github.ref_name }}
