@@ -57,7 +57,7 @@ jobs:
         with:
           # Project Initialization
           distPath: "../dist"
-          iconPath: "../dist"
+          iconPath: "public/postcard.png"
           bundleIdentifier: "de.evjs.postkartentool"
           appName: "PostkartenTool2"
           appVersion: ${{ github.ref_name }}
