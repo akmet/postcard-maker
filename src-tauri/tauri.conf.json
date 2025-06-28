@@ -42,7 +42,6 @@
   },
   "productName": "PostkartenTool2",
   "mainBinaryName": "PostkartenTool2",
-  "version": "0.2.0",
   "identifier": "de.evjs.postkartentool",
   "plugins": {},
   "app": {
