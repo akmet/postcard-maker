@@ -35,8 +35,8 @@
     "resources": [],
     "shortDescription": "",
     "linux": {
-      "deb": {
-        "depends": []
+      "appimage": {
+        "files": {}
       }
     }
   },
