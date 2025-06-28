@@ -8,6 +8,9 @@
     "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "vue": "^3.5.17"
+  },
   "devDependencies": {
     "@tauri-apps/cli": "^2.6.1",
     "@types/uuid": "^10.0.0",
@@ -26,6 +29,5 @@
     "vue": "^3.5.17",
     "vue-konva": "^3.2.1",
     "vue-tsc": "^2.2.10"
-  },
-  "dependencies": {}
+  }
 }

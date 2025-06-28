@@ -1,12 +1,10 @@
-name: "publish"
+name: Release
 
 on:
   push:
-    branches:
-      - release
-
-# This is the example from the readme.
-# On each push to the `release` branch it will create or update a GitHub release, build your app, and upload the artifacts to the release.
+    tags:
+      - '*.*.*'
+  workflow_dispatch:
 
 jobs:
   publish-tauri:
@@ -55,9 +53,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          # Project Initialization
+          #projectPath: "tauri-src"
+          #distPath: "../dist"
+          iconPath: "public/postcard.png"
+          bundleIdentifier: "de.evjs.postkartentool"
+          appName: "PostkartenTool2"
+          appVersion: ${{ github.ref_name }}
+          # Build Options
+          args: ${{ matrix.args }}
+          # Release Configuration
           tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
-          args: ${{ matrix.args }}
