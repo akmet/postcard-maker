@@ -1,25 +1,45 @@
 import { defineStore } from 'pinia'
 import { TextData, ImageData, Layout, ChangeType, Config } from '../types/types';
 import { toRaw } from 'vue';
-import { useLocalStorage } from '@vueuse/core'
+import {useLocalStorage} from '@vueuse/core'
 import { loadImages } from '../helper/imageHelper';
 import { initializeTexts } from '../helper/textHelper';
 import { reloadBorder } from '../helper/updateBorder';
 import { reloadGap } from '../helper/updateGap';
 
+function onError(error: any) {
+    if(error instanceof DOMException && error.message === 'The quota has been exceeded.') {
+        if(confirm('Die maximale Dateigröße ist erreicht. Sollen alte Bilder aus der Historie entfernt werden?')) {
+            const keysToKeepSet = new Set([
+                usePersistentStore().image1.image,
+                usePersistentStore().image2.image,
+                usePersistentStore().image3.image,
+                usePersistentStore().image4.image,
+                usePersistentStore().image5.image,
+            ]);
+            let counter = 0;
+            for (const key of usePersistentStore().images.keys()) {
+                if (!keysToKeepSet.has(key)) {
+                    usePersistentStore().images.delete(key);
+                    counter++;
+                }
+            }
+        }
+    }
+}
+
 export const usePersistentStore = defineStore('persistentStore', {
-
-
     state: () => ({
         texts: useLocalStorage('pinia/texts', [] as TextData[]),
-        image1: useLocalStorage('pinia/images/1', { index: 1, attributes: {}, image: '', selected: false } as ImageData),
-        image2: useLocalStorage('pinia/images/2', { index: 2, attributes: {}, image: '', selected: false } as ImageData),
-        image3: useLocalStorage('pinia/images/3', { index: 3, attributes: {}, image: '', selected: false } as ImageData),
-        image4: useLocalStorage('pinia/images/4', { index: 4, attributes: {}, image: '', selected: false } as ImageData),
-        image5: useLocalStorage('pinia/images/5', { index: 5, attributes: {}, image: '', selected: false } as ImageData),
-        gap: useLocalStorage('pinia/stage/gap', 0),
-        layout: useLocalStorage('pinia/stage/layout', Layout.TwoByTwo),
-        border: useLocalStorage('pinia/stage/border', 0),
+        image1: useLocalStorage('pinia/images/1', { index: 1, attributes: {}, image: null, selected: false } as ImageData, {onError: onError}),
+        image2: useLocalStorage('pinia/images/2', { index: 2, attributes: {}, image: null, selected: false } as ImageData, {onError: onError}),
+        image3: useLocalStorage('pinia/images/3', { index: 3, attributes: {}, image: null, selected: false } as ImageData, {onError: onError}),
+        image4: useLocalStorage('pinia/images/4', { index: 4, attributes: {}, image: null, selected: false } as ImageData, {onError: onError}),
+        image5: useLocalStorage('pinia/images/5', { index: 5, attributes: {}, image: null, selected: false } as ImageData, {onError: onError}),
+        gap: useLocalStorage('pinia/stage/gap', 0, {onError: onError}),
+        layout: useLocalStorage('pinia/stage/layout', Layout.TwoByTwo, {onError: onError}),
+        border: useLocalStorage('pinia/stage/border', 0, {onError: onError}),
+        images: useLocalStorage('pinia/images/store', new Map<string, string>(), {onError: onError}),
         _undo: [] as string[],
         _redo: [] as string[],
         config: {} as Config,
@@ -44,16 +64,20 @@ export const usePersistentStore = defineStore('persistentStore', {
         },
         destroyText(id: string) {
             this.changed(ChangeType.TextDestroy);
-            this.texts = this.texts.filter(i => i.id !== id);
+            this.texts = this.texts.filter((text: TextData) => text.id !== id);
         },
         selectText(id: string) {
-            this.texts.forEach((value: TextData) => value.selected = value.id === id)
+            this.texts.forEach((text: TextData) => text.selected = text.id === id)
         },
         selectedText() {
-            return this.texts.find((text: TextData) => text.selected === true);
+            return this.texts.find((text: TextData) => text.selected);
         },
         getImage(index: number) {
-            return this._getImage(index).image;
+            const uuid = this._getImage(index).image;
+            if (!uuid) {
+                return '';
+            }
+            return this.images.get(uuid);
         },
         setImage(index: number, image: string | null, attributes: object) {
             const _image = this._getImage(index);
@@ -61,7 +85,9 @@ export const usePersistentStore = defineStore('persistentStore', {
                 _image.attributes = attributes;
             }
             if (image) {
-                _image.image = image;
+                const uuid = crypto.randomUUID();
+                this.images.set(uuid, image);
+                _image.image = uuid;
             }
         },
         updateImage(index: number, attributes: object) {
@@ -161,6 +187,7 @@ export const usePersistentStore = defineStore('persistentStore', {
                 image3: toRaw(this.image3),
                 image4: toRaw(this.image4),
                 image5: toRaw(this.image5),
+                images: Array.from(toRaw(this.images).entries()),
                 gap: toRaw(this.gap),
                 layout: toRaw(this.layout),
                 border: toRaw(this.border),
@@ -176,6 +203,7 @@ export const usePersistentStore = defineStore('persistentStore', {
             this.image3 = state.image3;
             this.image4 = state.image4;
             this.image5 = state.image5;
+            this.images = new Map(state.images);
             this.gap = state.gap;
             this.layout = state.layout;
             this.border = state.border;
@@ -189,6 +217,7 @@ export const usePersistentStore = defineStore('persistentStore', {
             this.image3 = { index: 3, attributes: {}, image: '', selected: false };
             this.image4 = { index: 4, attributes: {}, image: '', selected: false };
             this.image5 = { index: 5, attributes: {}, image: '', selected: false };
+            this.images = new Map<string, string>();
             this.gap = 0;
             this.layout = Layout.TwoByTwo;
             this.border = 0;

@@ -7,7 +7,7 @@ export enum Layout {
 export type ImageData = {
     index: number,
     attributes: object,
-    image: string,
+    image: string | null,
     selected: boolean,
 }
 

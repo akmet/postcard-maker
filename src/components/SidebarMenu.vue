@@ -19,20 +19,18 @@ import TabHeader from './TabHeader.vue';
 import { useStageStore } from '../stores/stageStore';
 import { jsonExport, jsonImport } from '../helper/persistentJson';
 
+const persistentStore = usePersistentStore();
 const texts = ref();
-const selectedText = ref();
+const currentPage = ref('');
+
 reloadTexts();
 
 function reloadTexts() {
-  console.log('reloading texts in sidebarmenu');
-  selectedText.value = null;
-  texts.value = usePersistentStore().texts as TextData[];
+  console.log('reloading texts in SidebarMenu');
+  texts.value = persistentStore.texts as TextData[];
   console.log('updated texts.value successfully');
 }
 
-const persistentStore = usePersistentStore();
-
-const currentPage = ref('');
 function switchPage(page: string) {
   if (currentPage.value === page) {
     currentPage.value = '';
@@ -46,6 +44,31 @@ function clickedOnText(id: string) {
   attachNodeToTransformer(stage.getLayers(), stage.findOne((node: Konva.Node) => node instanceof Konva.Text && node.id() === id) as Konva.Text)
 }
 
+const mode = import.meta.env.MODE;
+const localStorageSize = ref('0');
+
+function updateStorageSize() {
+  let _lsTotal = 0, _xLen, _x;
+  for (_x in localStorage) {
+    if (!localStorage.hasOwnProperty(_x)) {
+      continue;
+    }
+    _xLen = ((localStorage[_x].length + _x.length) * 2);
+    _lsTotal += _xLen;
+    console.log(_x.substring(0, 50) + " = " + (_xLen / 1024).toFixed(2) + " KB")
+    if (_x.endsWith('pinia/images/store')) {
+      const images = JSON.parse(localStorage[_x]);
+      for (let image in images) {
+        let _yLen = ((images[image][1].length) * 2);
+        console.log(images[image][0] + " = " + (_yLen / 1024).toFixed(2) + " KB")
+      }
+    }
+  }
+
+  console.log("Total = " + (_lsTotal / 1024).toFixed(2) + " KB");
+  localStorageSize.value = (_lsTotal / 1024).toFixed(2) + " KB";
+}
+updateStorageSize();
 </script>
 
 <template>
@@ -56,7 +79,7 @@ function clickedOnText(id: string) {
       class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800 flex flex-col gap-2 dark:text-white content-start">
 
       <div class="flex justify-between items-center mb-2">
-        <img class="h-8 rounded-lg" src="/postcard.svg">
+        <img class="h-8 rounded-lg" src="/postcard.svg" alt="">
         <div class="text-xl flex-grow text-center">PostkartenTool</div>
       </div>
       <TabHeader :selected="currentPage" :titles="[
@@ -112,8 +135,11 @@ function clickedOnText(id: string) {
         </TwoColumns>
       </TabElement>
 
-      <TextModal class="mt-auto" :text="selectedText" @reload-texts="reloadTexts">
-      </TextModal>
+      <TextModal class="mt-auto" @reload-texts="reloadTexts"/>
+      <div class="text-center" v-if="mode === 'development'">
+        <div class="hover:cursor-pointer" @click="updateStorageSize()">LocalStorage: {{ localStorageSize }}</div>
+        <div>Bilder: {{ usePersistentStore().images.size }}</div>
+      </div>
       <span class="text-center">Contribute on <a class="text-blue-500" href='https://github.com/akmet/postcard-maker'
           target="_blank">GitHub</a>.</span>
     </div>

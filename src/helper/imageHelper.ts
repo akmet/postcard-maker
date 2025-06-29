@@ -4,32 +4,20 @@ import { useStageStore } from "../stores/stageStore";
 import { ImageData } from "../types/types";
 import { KonvaEventObject } from "konva/lib/Node";
 
-export function createImage(target: HTMLInputElement, index: number) {
-    if (target.files?.length !== 1) {
-        throw new Error("Error: files hat nicht ein Element");
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-        const base64String = reader.result;
-        if (typeof base64String !== 'string') {
-            throw new Error("Error: Image not string");
-        }
-
-        usePersistentStore().setImage(index, base64String, {});
-        usePersistentStore().updateImage(index, { scaleX: 1, scaleY: 1 });
-        loadImage(index);
-    };
-    reader.readAsDataURL(target.files[0]);
+export function createImage(base64String: string, index: number) {
+    usePersistentStore().setImage(index, base64String, {});
+    usePersistentStore().updateImage(index, { scaleX: 1, scaleY: 1 });
+    loadImage(index);
 }
 
 export function loadImage(index: number) {
-
     const img = new window.Image();
     const persistentStore = usePersistentStore();
     const imageData = persistentStore._getImage(index);
-    img.src = imageData.image;
-
+    const src = persistentStore.getImage(index);
+    if (src) {
+        img.src = src;
+    }
     img.onload = () => {
         const stage = useStageStore().stage as Konva.Stage;
 
@@ -47,7 +35,7 @@ export function loadImage(index: number) {
             .image(img)
             .setAttrs({
                 width: group.clipWidth(),
-                height: (group.clipHeight() / img.width) * img.height,
+                height: group.clipWidth() * (img.height / img.width),
                 x: group.clipX(),
                 y: group.clipY(),
                 imgWidth: img.width,

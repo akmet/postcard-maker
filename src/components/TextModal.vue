@@ -67,8 +67,8 @@ import Button from './Button.vue';
 import { useStageStore } from '../stores/stageStore';
 import { usePersistentStore } from '../stores/persistentStore';
 import Konva from 'konva';
+import attachNodeToTransformer from "../helper/attachNodeToTransformer";
 
-const props = defineProps(['text']);
 let fontAvailable = [] as String[];
 const emit = defineEmits(['reloadTexts']);
 
@@ -116,8 +116,14 @@ onMounted(async () => {
 })
 
 function destroyText() {
-    usePersistentStore().destroyText(props.text);
-    emit('reloadTexts');
+  const node = text.value;
+  if (node) {
+    const stage = useStageStore().stage as Konva.Stage;
+    attachNodeToTransformer(stage.getLayers(), undefined)
+    usePersistentStore().destroyText(node.id())
+    node.destroy();
+  }
+  emit('reloadTexts');
 }
 </script>
 
