@@ -93,11 +93,11 @@ jobs:
           iconPath: "public/postcard.png"
           bundleIdentifier: "de.evjs.postkartentool"
           appName: "PostkartenTool2"
-          appVersion: ${{ jobs.build.outputs.version }}
+          appVersion: ${{ needs.build.outputs.version }}
 
           # Build Options
           args: ${{ matrix.args }}
 
           # Release Configuration
-          releaseId: ${{ jobs.build.outputs.release_id }}
-          tagName: app-v${{ steps.get_version.outputs.version }}
+          releaseId: ${{ needs.build.outputs.release_id }}
+          tagName: app-v${{ needs.build.outputs.version }}
