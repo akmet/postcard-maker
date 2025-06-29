@@ -66,15 +66,15 @@ jobs:
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: `v${process.env.version}`,
-              name: `Desktop App v${process.env.version}`,
+              tag_name: `${process.env.version}`,
+              name: `Desktop App ${process.env.version}`,
               body: 'Take a look at the assets to download and install this app.',
               draft: true,
               prerelease: false
             })
             return data.id
 
-  build-tauri:
+  build_tauri:
     permissions:
       contents: write
     strategy:
@@ -137,20 +137,20 @@ jobs:
 
           # Release Configuration
           releaseId: ${{ needs.create_release.outputs.release_id }}
-          tagName: v${{ needs.create_release.outputs.version }}
+          tagName: ${{ needs.create_release.outputs.version }}
 
   publish-release:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    needs: [create_release, build-tauri]
+    needs: [create_release, build_tauri]
 
     steps:
       - name: publish release
         id: publish-release
         uses: actions/github-script@v6
         env:
-          release_id: ${{ needs.create-release.outputs.release_id }}
+          release_id: ${{ needs.create_release.outputs.release_id }}
         with:
           script: |
             github.rest.repos.updateRelease({
