@@ -31,7 +31,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-      - uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1
         with:
           tag: app-v${{ steps.get_version.outputs.version }}
           name: Release v${{ steps.get_version.outputs.version }}
