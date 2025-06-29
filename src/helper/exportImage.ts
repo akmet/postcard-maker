@@ -27,8 +27,8 @@ export default function (method: string) {
         }
     }
     stage.toDataURL({
-        x: rect.x(),
-        y: rect.y(),
+        x: stage.x() + rect.x(),
+        y: stage.y() + rect.y(),
         width: rect.width(),
         height: rect.height(),
         callback(str: string) {
