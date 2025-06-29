@@ -20,7 +20,7 @@ jobs:
 
       - name: Git Semantic Version
         id: get_version
-        uses: paulhatch/semantic-version@5.4.0
+        uses: PaulHatch/semantic-version@v5.4.0
         with:
           major_pattern: "(MAJOR|major)"
           minor_pattern: "(MINOR|minor)"
