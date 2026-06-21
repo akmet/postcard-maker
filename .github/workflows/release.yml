@@ -13,19 +13,24 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
-          node-version-file: ".nvmrc"
-          cache: "yarn"
-          cache-dependency-path: "yarn.lock"
+          persist-credentials: false
 
-      - name: install frontend dependencies
-        run: yarn install
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '24'
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11
+
+      - name: Install Node Dependencies
+        run: pnpm install
 
       - name: build frontend
-        run: yarn build
+        run: pnpm build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -51,10 +56,10 @@ jobs:
         id: get_version
         uses: PaulHatch/semantic-version@v5.4.0
         with:
-          major_pattern: "(MAJOR|major)"
-          minor_pattern: "(MINOR|minor)"
+          major_pattern: '(MAJOR|major)'
+          minor_pattern: '(MINOR|minor)'
           bump_each_commit: false
-          tag_prefix: ""
+          tag_prefix: ''
 
       - name: create release
         id: create_release
@@ -81,23 +86,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # for Arm based macs (M1 and above).
-            args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest" # for Intel based macs.
-            args: "--target x86_64-apple-darwin"
-          - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
-            args: ""
-          - platform: "windows-latest"
-            args: ""
+          - platform: 'macos-latest' # for Arm based macs (M1 and above).
+            args: '--target aarch64-apple-darwin'
+          - platform: 'macos-latest' # for Intel based macs.
+            args: '--target x86_64-apple-darwin'
+          - platform: 'ubuntu-22.04' # for Tauri v1 you could replace this with ubuntu-20.04.
+            args: ''
+          - platform: 'windows-latest'
+            args: ''
 
-    needs: [ assets, create_release ]
+    needs: [assets, create_release]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: 'lts/*'
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -123,13 +128,13 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPLE_SIGNING_IDENTITY: "-"
+          APPLE_SIGNING_IDENTITY: '-'
         with:
           # Project Initialization
-          distPath: "../dist"
-          iconPath: "public/postcard.png"
-          bundleIdentifier: "de.evjs.postkartentool"
-          appName: "PostkartenTool2"
+          distPath: '../dist'
+          iconPath: 'public/postcard.png'
+          bundleIdentifier: 'de.evjs.postkartentool'
+          appName: 'PostkartenTool2'
           appVersion: ${{ needs.create_release.outputs.version }}
 
           # Build Options

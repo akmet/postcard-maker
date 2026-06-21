@@ -1,7 +1,7 @@
 <template>
-    <div class="px-3 py-4 overflow-y-auto grid grid-cols-2 gap-2
-        place-items-center align-items-center justify-items-stretch content-start">
-        <slot></slot>
-    </div>
+  <div
+    class="align-items-center grid grid-cols-2 place-items-center content-start justify-items-stretch gap-2 overflow-y-auto px-3 py-4"
+  >
+    <slot></slot>
+  </div>
 </template>
-  

@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": true,
+  "singleQuote": true,
+  "singleAttributePerLine": false,
+  "htmlWhitespaceSensitivity": "css",
+  "printWidth": 100,
+  "sortTailwindcss": {
+    "functions": ["clsx", "cn", "cva"]
+  },
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "ignorePatterns": [
+    ".ai/**",
+    ".claude/**",
+    "app/**",
+    "bootstrap/**",
+    "config/**",
+    "database/**",
+    "lang/**",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "resources/js/components/ui/**",
+    "routes/**",
+    "storage/**",
+    "tests/**",
+    "vendor/**"
+  ]
+}
