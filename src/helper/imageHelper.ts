@@ -5,8 +5,8 @@ import type { ImageData } from '../types/types';
 import type { KonvaEventObject } from 'konva/lib/Node';
 
 export function createImage(base64String: string, index: number) {
-  usePersistentStore().setImage(index, base64String, {});
-  usePersistentStore().updateImage(index, { scaleX: 1, scaleY: 1 });
+  const store = usePersistentStore();
+  store.setImage(index, base64String, { scaleX: 1, scaleY: 1 });
   loadImage(index);
 }
 

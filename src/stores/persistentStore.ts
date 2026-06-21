@@ -3,30 +3,7 @@ import type { TextData, ImageData } from '../types/types';
 import { Layout } from '../types/types';
 import { toRaw } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
-
-function onError(error: unknown) {
-  if (error instanceof DOMException && error.message === 'The quota has been exceeded.') {
-    if (
-      confirm(
-        'Die maximale Dateigröße ist erreicht. Sollen alte Bilder aus der Historie entfernt werden?'
-      )
-    ) {
-      const store = usePersistentStore();
-      const keysToKeep = new Set([
-        store.image1.image,
-        store.image2.image,
-        store.image3.image,
-        store.image4.image,
-        store.image5.image
-      ]);
-      for (const key of store.images.keys()) {
-        if (!keysToKeep.has(key)) {
-          store.images.delete(key);
-        }
-      }
-    }
-  }
-}
+import { idbGetAll, idbPut, idbDelete, idbClear } from '../helper/imageDatabase';
 
 type StateSnapshot = {
   texts: TextData[];
@@ -43,37 +20,42 @@ type StateSnapshot = {
 export const usePersistentStore = defineStore('persistentStore', {
   state: () => ({
     texts: useLocalStorage('pinia/texts', [] as TextData[]),
-    image1: useLocalStorage(
-      'pinia/images/1',
-      { index: 1, attributes: {}, image: null, selected: false } as ImageData,
-      { onError }
-    ),
-    image2: useLocalStorage(
-      'pinia/images/2',
-      { index: 2, attributes: {}, image: null, selected: false } as ImageData,
-      { onError }
-    ),
-    image3: useLocalStorage(
-      'pinia/images/3',
-      { index: 3, attributes: {}, image: null, selected: false } as ImageData,
-      { onError }
-    ),
-    image4: useLocalStorage(
-      'pinia/images/4',
-      { index: 4, attributes: {}, image: null, selected: false } as ImageData,
-      { onError }
-    ),
-    image5: useLocalStorage(
-      'pinia/images/5',
-      { index: 5, attributes: {}, image: null, selected: false } as ImageData,
-      { onError }
-    ),
-    gap: useLocalStorage('pinia/stage/gap', 0, { onError }),
-    layout: useLocalStorage('pinia/stage/layout', Layout.TwoByTwo, { onError }),
-    border: useLocalStorage('pinia/stage/border', 0, { onError }),
-    images: useLocalStorage('pinia/images/store', new Map<string, string>(), { onError }),
-    undoStore: [] as string[],
-    redoStore: [] as string[]
+    image1: useLocalStorage('pinia/images/1', {
+      index: 1,
+      attributes: {},
+      image: null,
+      selected: false
+    } as ImageData),
+    image2: useLocalStorage('pinia/images/2', {
+      index: 2,
+      attributes: {},
+      image: null,
+      selected: false
+    } as ImageData),
+    image3: useLocalStorage('pinia/images/3', {
+      index: 3,
+      attributes: {},
+      image: null,
+      selected: false
+    } as ImageData),
+    image4: useLocalStorage('pinia/images/4', {
+      index: 4,
+      attributes: {},
+      image: null,
+      selected: false
+    } as ImageData),
+    image5: useLocalStorage('pinia/images/5', {
+      index: 5,
+      attributes: {},
+      image: null,
+      selected: false
+    } as ImageData),
+    gap: useLocalStorage('pinia/stage/gap', 0),
+    layout: useLocalStorage('pinia/stage/layout', Layout.TwoByTwo),
+    border: useLocalStorage('pinia/stage/border', 0),
+    images: new Map<string, string>(),
+    undoStore: useLocalStorage('pinia/undoStore', [] as string[]),
+    redoStore: useLocalStorage('pinia/redoStore', [] as string[])
   }),
   actions: {
     createText(id: string, attributes: string): TextData {
@@ -100,13 +82,15 @@ export const usePersistentStore = defineStore('persistentStore', {
     },
     setImage(index: number, image: string | null, attributes: Record<string, unknown>) {
       const imageData = this.getImageData(index);
-      if (attributes) {
-        imageData.attributes = attributes;
-      }
       if (image) {
+        this.changed();
         const uuid = crypto.randomUUID();
         this.images.set(uuid, image);
         imageData.image = uuid;
+        idbPut(uuid, image).catch(console.error);
+      }
+      if (attributes) {
+        imageData.attributes = attributes;
       }
     },
     updateImage(index: number, attributes: Record<string, unknown>) {
@@ -141,6 +125,7 @@ export const usePersistentStore = defineStore('persistentStore', {
       this.border = border;
     },
     undo(): boolean {
+      console.log('Undoing!');
       const step = this.undoStore.pop();
       if (!step) return false;
       this.redoStore.push(this.toRawString());
@@ -148,6 +133,7 @@ export const usePersistentStore = defineStore('persistentStore', {
       return true;
     },
     redo(): boolean {
+      console.log('Redoing!');
       const step = this.redoStore.pop();
       if (!step) return false;
       this.undoStore.push(this.toRawString());
@@ -155,6 +141,7 @@ export const usePersistentStore = defineStore('persistentStore', {
       return true;
     },
     changed() {
+      console.log('Something changed!');
       this.undoStore.push(this.toRawString());
       this.redoStore = [];
     },
@@ -173,11 +160,11 @@ export const usePersistentStore = defineStore('persistentStore', {
     },
     internalFromState(state: StateSnapshot) {
       this.texts = state.texts;
-      this.image1 = state.image1;
-      this.image2 = state.image2;
-      this.image3 = state.image3;
-      this.image4 = state.image4;
-      this.image5 = state.image5;
+      Object.assign(this.image1, state.image1);
+      Object.assign(this.image2, state.image2);
+      Object.assign(this.image3, state.image3);
+      Object.assign(this.image4, state.image4);
+      Object.assign(this.image5, state.image5);
       this.gap = state.gap;
       this.layout = state.layout;
       this.border = state.border;
@@ -204,9 +191,36 @@ export const usePersistentStore = defineStore('persistentStore', {
     fromJson(json: string) {
       const state = JSON.parse(json);
       this.internalFromState(state as StateSnapshot);
-      this.images = new Map(state.images);
+      const imported = new Map<string, string>(state.images);
+      this.images = imported;
       this.undoStore = state.undoStore ?? [];
       this.redoStore = state.redoStore ?? [];
+      idbClear()
+        .then(() => Promise.all(Array.from(imported.entries()).map(([k, v]) => idbPut(k, v))))
+        .catch(console.error);
+    },
+    pruneImages() {
+      const referenced = new Set<string>();
+
+      for (const i of [1, 2, 3, 4, 5] as const) {
+        const uuid = this.getImageData(i).image;
+        if (uuid) referenced.add(uuid);
+      }
+
+      for (const snapshot of [...toRaw(this.undoStore), ...toRaw(this.redoStore)]) {
+        const state = JSON.parse(snapshot) as StateSnapshot;
+        for (const key of ['image1', 'image2', 'image3', 'image4', 'image5'] as const) {
+          const uuid = state[key]?.image;
+          if (uuid) referenced.add(uuid);
+        }
+      }
+
+      for (const uuid of this.images.keys()) {
+        if (!referenced.has(uuid)) {
+          this.images.delete(uuid);
+          idbDelete(uuid).catch(console.error);
+        }
+      }
     },
     clear() {
       this.texts = [];
@@ -221,6 +235,10 @@ export const usePersistentStore = defineStore('persistentStore', {
       this.border = 0;
       this.undoStore = [];
       this.redoStore = [];
+      idbClear().catch(console.error);
+    },
+    async initImages() {
+      this.images = await idbGetAll();
     }
   }
 });

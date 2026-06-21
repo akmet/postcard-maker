@@ -38,10 +38,12 @@ import SidebarMenu from './components/SidebarMenu.vue';
 import StageZoom from './components/StageZoom.vue';
 import { onMounted, ref } from 'vue';
 import resizeStage from './helper/resizeStage';
+import { usePersistentStore } from './stores/persistentStore';
 
 const isCollapsed = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
+  await usePersistentStore().initImages();
   createStages();
   window.addEventListener('resize', resizeStage);
 });

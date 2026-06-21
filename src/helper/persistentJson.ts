@@ -5,7 +5,9 @@ import { reloadBorder } from './updateBorder';
 import { reloadGap } from './updateGap';
 
 export function jsonExport() {
-  const raw = usePersistentStore().toJson();
+  const store = usePersistentStore();
+  store.pruneImages();
+  const raw = store.toJson();
   const filename = prompt('Wie soll die Datei heißen?', 'Postkarte_.json');
   if (!filename) return;
 
