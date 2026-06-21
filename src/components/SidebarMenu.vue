@@ -19,6 +19,9 @@ import TabHeader from './TabHeader.vue';
 import { useStageStore } from '../stores/stageStore';
 import { jsonExport, jsonImport } from '../helper/persistentJson';
 
+const props = defineProps<{ collapsed: boolean }>();
+const emit = defineEmits<{ toggle: [] }>();
+
 const persistentStore = usePersistentStore();
 const stageStore = useStageStore();
 
@@ -69,7 +72,8 @@ function localStorageSize(): string {
 <template>
   <aside
     id="default-sidebar"
-    class="fixed top-0 left-0 z-40 h-screen w-64 -translate-x-0 transition-transform sm:translate-x-0"
+    :class="props.collapsed ? '-translate-x-full' : 'translate-x-0'"
+    class="fixed left-0 top-0 z-40 h-screen w-64 transition-transform duration-300"
     aria-label="Sidebar"
   >
     <div
@@ -78,6 +82,26 @@ function localStorageSize(): string {
       <div class="mb-2 flex items-center justify-between">
         <img class="h-8 rounded-lg" src="/postcard.svg" alt="" />
         <div class="flex-grow text-center text-xl">PostkartenTool</div>
+        <button
+          @click="emit('toggle')"
+          class="rounded p-1 hover:bg-gray-200 dark:hover:bg-gray-700"
+          aria-label="Sidebar schließen"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
       </div>
       <TabHeader
         :selected="currentPage"

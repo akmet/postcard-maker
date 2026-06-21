@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div
-      v-if="text"
-      tabindex="-1"
-      class="flex flex-col place-items-center"
-    >
+    <div v-if="text" tabindex="-1" class="flex flex-col place-items-center">
       <hr class="w-full" />
       <TwoColumns>
         <label>Schriftart</label>
@@ -13,8 +9,10 @@
           :options="fontAvailable"
           :value="text.fontFamily()"
           :params="{
-            formatOption: (option: any) => Object.assign({}, option, { style: 'font-family: ' + option.id + ';' }),
-            formatSelection: (option: any) => Object.assign({}, option, { style: 'font-family: ' + option.id + ';' })
+            formatOption: (option: any) =>
+              Object.assign({}, option, { style: 'font-family: ' + option.id + ';' }),
+            formatSelection: (option: any) =>
+              Object.assign({}, option, { style: 'font-family: ' + option.id + ';' })
           }"
           @change="(value: string) => text?.fontFamily(value) && update()"
         />

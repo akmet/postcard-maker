@@ -6,8 +6,8 @@ import App from './App.vue';
 import './style.css';
 
 // oxlint-disable-next-line import/no-unassigned-import
-import 'cropperjs/dist/cropper.css'
+import 'cropperjs/dist/cropper.css';
 // oxlint-disable-next-line import/no-unassigned-import
-import 'vue-picture-cropper/style.css'
+import 'vue-picture-cropper/style.css';
 
 createApp(App).use(VueKonva).use(createPinia()).mount('#app');

@@ -108,5 +108,5 @@ export const SYSTEM_FONTS: string[] = [
   'Webdings',
   'Wingdings',
   'Yu Gothic',
-  'Zapfino',
+  'Zapfino'
 ].toSorted();

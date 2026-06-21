@@ -22,7 +22,8 @@ export function loadImage(index: number) {
     const stage = useStageStore().stage as Konva.Stage;
 
     const group = stage.findOne(
-      (node: Node) => node instanceof Konva.Group && (node as Konva.Group).name() === 'Bild ' + index
+      (node: Node) =>
+        node instanceof Konva.Group && (node as Konva.Group).name() === 'Bild ' + index
     ) as Konva.Group;
     let konvaImage = group.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
     if (!konvaImage) {
@@ -59,7 +60,8 @@ export function destroyImage(image: ImageData) {
   }
   groupImages
     .findOne(
-      (node: Konva.Node) => node instanceof Konva.Image && (node as Konva.Image).name() === 'Bild ' + image.index
+      (node: Konva.Node) =>
+        node instanceof Konva.Image && (node as Konva.Image).name() === 'Bild ' + image.index
     )
     ?.destroy();
   usePersistentStore().destroyImage(image.index);

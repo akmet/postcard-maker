@@ -71,7 +71,10 @@
 
 <script lang="ts" setup>
 import { createImage } from '../helper/imageHelper';
-import VuePictureCropper, { type VuePictureCropperRefValue, type CropperInstance } from 'vue-picture-cropper';
+import VuePictureCropper, {
+  type VuePictureCropperRefValue,
+  type CropperInstance
+} from 'vue-picture-cropper';
 import FileDrop from './FileDrop.vue';
 import { computed, ref } from 'vue';
 import Button from './Button.vue';
