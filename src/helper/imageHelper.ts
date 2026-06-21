@@ -18,18 +18,18 @@ export function loadImage(index: number) {
   if (src) {
     img.src = src;
   }
-  img.addEventListener('load',() => {
+  img.addEventListener('load', () => {
     const stage = useStageStore().stage as Konva.Stage;
 
-    let group = stage.findOne(
-      (node: Node) => node instanceof Konva.Group && node.name() === 'Bild ' + index
+    const group = stage.findOne(
+      (node: Node) => node instanceof Konva.Group && (node as Konva.Group).name() === 'Bild ' + index
     ) as Konva.Group;
     let konvaImage = group.findOne((node: Node) => node instanceof Konva.Image) as Konva.Image;
     if (!konvaImage) {
       konvaImage = new Konva.Image({ draggable: true, image: undefined });
       konvaImage.on('dragend transformend', ($event: KonvaEventObject<unknown>) => {
-        const konvaImage2 = $event.currentTarget as Konva.Image;
-        const { image, ...attributes } = konvaImage2.getAttrs();
+        const target = $event.currentTarget as Konva.Image;
+        const { image: _image, ...attributes } = target.getAttrs();
         usePersistentStore().updateImage(index, attributes);
       });
     }
@@ -45,7 +45,7 @@ export function loadImage(index: number) {
       image: img
     });
 
-    const { image, ...attributes } = konvaImage.getAttrs();
+    const { image: _image2, ...attributes } = konvaImage.getAttrs();
     persistentStore.setImage(index, null, attributes);
 
     group.add(konvaImage);
@@ -53,20 +53,20 @@ export function loadImage(index: number) {
 }
 
 export function destroyImage(image: ImageData) {
-  const group_images = useStageStore().group_images as Konva.Group;
-  if (!group_images) {
+  const groupImages = useStageStore().groupImages as Konva.Group;
+  if (!groupImages) {
     throw new Error('Cannot destroy image when stage not set-up');
   }
-  group_images
+  groupImages
     .findOne(
-      (node: Konva.Node) => node instanceof Konva.Image && node.name() === 'Bild ' + image.index
+      (node: Konva.Node) => node instanceof Konva.Image && (node as Konva.Image).name() === 'Bild ' + image.index
     )
     ?.destroy();
   usePersistentStore().destroyImage(image.index);
 }
 
 export function loadImages() {
-  for (let index of [1, 2, 3, 4, 5]) {
+  for (const index of [1, 2, 3, 4, 5]) {
     loadImage(index);
   }
 }

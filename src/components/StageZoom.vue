@@ -74,18 +74,24 @@
 import { loadImages } from '../helper/imageHelper';
 import stageZoom from '../helper/stageZoom';
 import { reloadTexts } from '../helper/textHelper';
+import { reloadGap } from '../helper/updateGap';
 import { usePersistentStore } from '../stores/persistentStore';
 
+const persistentStore = usePersistentStore();
+
 function undo() {
-  if (usePersistentStore().undo()) {
+  if (persistentStore.undo()) {
     reloadTexts();
     loadImages();
+    reloadGap();
   }
 }
+
 function redo() {
-  if (usePersistentStore().redo()) {
+  if (persistentStore.redo()) {
     reloadTexts();
     loadImages();
+    reloadGap();
   }
 }
 </script>

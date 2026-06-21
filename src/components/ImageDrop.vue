@@ -3,8 +3,7 @@
     :text="'Bild ' + props.item + ' hochladen'"
     :identifier="'dropzone-file-' + props.item"
     @some-event="fileDropped"
-  >
-  </FileDrop>
+  />
 
   <teleport to="#modals">
     <div
@@ -72,59 +71,35 @@
 
 <script lang="ts" setup>
 import { createImage } from '../helper/imageHelper';
-import VuePictureCropper, { VuePictureCropperRefValue, CropperInstance } from 'vue-picture-cropper';
+import VuePictureCropper, { type VuePictureCropperRefValue, type CropperInstance } from 'vue-picture-cropper';
 import FileDrop from './FileDrop.vue';
-import { computed, reactive, ref } from 'vue';
+import { computed, ref } from 'vue';
 import Button from './Button.vue';
-const props = defineProps(['item']);
 
-const isShowModal = ref<boolean>(false);
-const uploadInput = ref<HTMLInputElement | null>(null);
-const pic = ref<string>('');
-const result = reactive({
-  dataURL: '',
-  blobURL: ''
-});
+const props = defineProps<{ item: number }>();
 
+const isShowModal = ref(false);
+const pic = ref('');
 const vpcRef = ref<VuePictureCropperRefValue | null>(null);
 const cropper = computed<CropperInstance | null>(() => vpcRef.value?.cropper ?? null);
 
 function fileDropped(event: Event) {
-  if (event.target instanceof HTMLInputElement) {
-    // Reset last selection and results
-    pic.value = '';
-    result.dataURL = '';
-    result.blobURL = '';
+  if (!(event.target instanceof HTMLInputElement)) return;
 
-    // Get selected files
-    const { files } = event.target as HTMLInputElement;
-    if (!files || !files.length) return;
+  const { files } = event.target;
+  if (!files?.length) return;
 
-    // Convert to dataURL and pass to the cropper component
-    const file = files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.addEventListener('load', () => {
-      // Update the picture source of the `img` prop
-      pic.value = String(reader.result);
-
-      // Show the modal
-      isShowModal.value = true;
-
-      // Clear selected files of input element
-      if (!uploadInput.value) return;
-      uploadInput.value.value = '';
-    });
-  }
+  pic.value = '';
+  const reader = new FileReader();
+  reader.readAsDataURL(files[0]);
+  reader.addEventListener('load', () => {
+    pic.value = String(reader.result);
+    isShowModal.value = true;
+  });
 }
 
-/**
- * Get cropping results
- */
 function getResult() {
-  if (!cropper.value) {
-    return;
-  }
+  if (!cropper.value) return;
 
   const base64 = cropper.value.getDataURL({
     width: 874 * 1.5,
@@ -135,4 +110,3 @@ function getResult() {
   createImage(base64, props.item);
 }
 </script>
-<style></style>

@@ -6,7 +6,7 @@ export enum Layout {
 
 export type ImageData = {
   index: number;
-  attributes: object;
+  attributes: Record<string, unknown>;
   image: string | null;
   selected: boolean;
 };
@@ -15,19 +15,4 @@ export type TextData = {
   id: string;
   selected: boolean;
   attributes: string;
-};
-
-export enum ChangeType {
-  TextCreate = 'TextCreate',
-  TextUpdate = 'TextUpdate',
-  TextDestroy = 'TextDestroy',
-  ImageUpdate = 'ImageUpdate',
-  ImageDestroy = 'ImageDestroy',
-  GapUpdate = 'GapUpdate',
-  LayoutUpdate = 'LayoutUpdate',
-  BorderUpdate = 'BorderUpdate'
-}
-
-export type Config = {
-  sidebarPage: number;
 };

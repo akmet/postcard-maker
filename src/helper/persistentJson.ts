@@ -4,60 +4,46 @@ import { initializeTexts } from './textHelper';
 import { reloadBorder } from './updateBorder';
 import { reloadGap } from './updateGap';
 
-function jsonExport() {
+export function jsonExport() {
   const raw = usePersistentStore().toJson();
   const filename = prompt('Wie soll die Datei heißen?', 'Postkarte_.json');
-  if (!filename) {
-    return console.log('Could not handle empty filename');
-  }
+  if (!filename) return;
 
   const link = document.createElement('a');
   const file = new Blob([raw], { type: 'application/json' });
   link.href = URL.createObjectURL(file);
-
   link.download = filename;
   link.click();
   URL.revokeObjectURL(link.href);
 }
 
-function jsonImport(event: Event) {
+export function jsonImport(event: Event) {
   const target = event.target as HTMLInputElement;
+  if (!target.files?.length) return;
 
-  if (!target.files) {
-    console.log('file is not filled');
-    return;
-  }
+  const reader = new FileReader();
+  reader.addEventListener('load', (progress: ProgressEvent<FileReader>) => {
+    const result = progress.target?.result;
+    if (typeof result !== 'string') return;
 
-  let reader = new FileReader();
-  reader.addEventListener('load', function (progress: ProgressEvent<FileReader>) {
-    if (!progress.target) {
-      console.log('Could not read file');
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(result);
+    } catch {
+      console.error('JSON import failed: invalid JSON');
       return;
     }
-    if (typeof progress.target.result !== 'string') {
-      console.log('filereader.result is not plain string');
-      return;
-    }
-    if (!isJsonString(progress.target.result)) {
-      console.log('input is not valid json');
-      return;
-    }
-    usePersistentStore().fromJson(progress.target.result);
 
+    if (!parsed || typeof parsed !== 'object') {
+      console.error('JSON import failed: unexpected format');
+      return;
+    }
+
+    usePersistentStore().fromJson(result);
     loadImages();
     initializeTexts();
     reloadBorder();
     reloadGap();
-  })
+  });
   reader.readAsText(target.files[0]);
 }
-
-function isJsonString(input: string): boolean {
-  try {
-    JSON.parse(input);
-  } catch {
-    return false;
-  }
-  return true;
-}
-export { jsonExport, jsonImport };

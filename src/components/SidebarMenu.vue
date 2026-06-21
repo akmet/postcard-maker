@@ -3,7 +3,7 @@ import ImageDrop from './ImageDrop.vue';
 import FileDrop from './FileDrop.vue';
 import switchTemplate from '../helper/switchTemplate';
 import { createText } from '../helper/textHelper';
-import { Layout, TextData } from '../types/types';
+import { Layout } from '../types/types';
 import exportImage from '../helper/exportImage';
 import updateGap from '../helper/updateGap';
 import updateBorder from '../helper/updateBorder';
@@ -13,69 +13,57 @@ import Button from './Button.vue';
 import { usePersistentStore } from '../stores/persistentStore';
 import Konva from 'konva';
 import attachNodeToTransformer from '../helper/attachNodeToTransformer';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import TabElement from './TabElement.vue';
 import TabHeader from './TabHeader.vue';
 import { useStageStore } from '../stores/stageStore';
 import { jsonExport, jsonImport } from '../helper/persistentJson';
 
 const persistentStore = usePersistentStore();
-const texts = ref();
+const stageStore = useStageStore();
+
 const currentPage = ref('');
+const texts = computed(() => persistentStore.texts);
 
-reloadTexts();
+const layout = computed({
+  get: () => persistentStore.layout,
+  set: (value: Layout) => switchTemplate(value)
+});
 
-function reloadTexts() {
-  console.log('reloading texts in SidebarMenu');
-  texts.value = persistentStore.texts as TextData[];
-  console.log('updated texts.value successfully');
-}
+const gap = computed({
+  get: () => persistentStore.gap,
+  set: (value: number) => updateGap(value)
+});
+
+const border = computed({
+  get: () => persistentStore.border,
+  set: (value: number) => updateBorder(value)
+});
 
 function switchPage(page: string) {
-  if (currentPage.value === page) {
-    currentPage.value = '';
-  } else {
-    currentPage.value = page;
-  }
+  currentPage.value = currentPage.value === page ? '' : page;
 }
 
 function clickedOnText(id: string) {
-  const stage = useStageStore().stage as Konva.Stage;
   attachNodeToTransformer(
-    stage.getLayers(),
-    stage.findOne(
+    (stageStore.stage as Konva.Stage).getLayers(),
+    (stageStore.stage as Konva.Stage).findOne(
       (node: Konva.Node) => node instanceof Konva.Text && node.id() === id
     ) as Konva.Text
   );
 }
 
 const mode = import.meta.env.MODE;
-const localStorageSize = ref('0');
 
-function updateStorageSize() {
-  let lsTotal = 0,
-    xLen,
-    x;
-  for (x in localStorage) {
-    if (!localStorage.hasOwnProperty(x)) {
-      continue;
-    }
-    xLen = (localStorage[x].length + x.length) * 2;
-    lsTotal += xLen;
-    console.log(x.substring(0, 50) + ' = ' + (xLen / 1024).toFixed(2) + ' KB');
-    if (x.endsWith('pinia/images/store')) {
-      const images = JSON.parse(localStorage[x]);
-      for (let image in images) {
-        let yLen = images[image][1].length * 2;
-        console.log(images[image][0] + ' = ' + (yLen / 1024).toFixed(2) + ' KB');
-      }
+function localStorageSize(): string {
+  let total = 0;
+  for (const key in localStorage) {
+    if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
+      total += (localStorage[key].length + key.length) * 2;
     }
   }
-
-  console.log('Total = ' + (lsTotal / 1024).toFixed(2) + ' KB');
-  localStorageSize.value = (lsTotal / 1024).toFixed(2) + ' KB';
+  return (total / 1024).toFixed(2) + ' KB';
 }
-updateStorageSize();
 </script>
 
 <template>
@@ -100,61 +88,31 @@ updateStorageSize();
           { target: 'export', icon: 'download' }
         ]"
         @switch-page="(page: string) => switchPage(page)"
-      >
-      </TabHeader>
+      />
       <TabElement :visible="currentPage === 'settings'">
         <TwoColumns>
           <label class="justify-self-start">Layout</label>
-          <select class="dark:bg-gray-800" @change="switchTemplate">
-            <option :value="Layout.TwoByTwo" :selected="persistentStore.layout === Layout.TwoByTwo">
-              2+2
-            </option>
-            <option
-              :value="Layout.TwoByThree"
-              :selected="persistentStore.layout === Layout.TwoByThree"
-            >
-              2+3
-            </option>
-            <option
-              :value="Layout.ThreeByTwo"
-              :selected="persistentStore.layout === Layout.ThreeByTwo"
-            >
-              3+2
-            </option>
+          <select v-model="layout" class="dark:bg-gray-800">
+            <option :value="Layout.TwoByTwo">2+2</option>
+            <option :value="Layout.TwoByThree">2+3</option>
+            <option :value="Layout.ThreeByTwo">3+2</option>
           </select>
           <label class="justify-self-start">Gap</label>
-          <input
-            id="gap"
-            type="range"
-            min="0"
-            max="50"
-            step="10"
-            :value="persistentStore.gap"
-            @input="updateGap"
-          />
-
+          <input type="range" min="0" max="50" step="10" v-model.number="gap" />
           <label class="justify-self-start">Border</label>
-          <input
-            id="border"
-            type="range"
-            min="0"
-            max="50"
-            step="10"
-            :value="persistentStore.border"
-            @input="updateBorder"
-          />
+          <input type="range" min="0" max="50" step="10" v-model.number="border" />
         </TwoColumns>
       </TabElement>
       <TabElement :visible="currentPage === 'images'">
         <TwoColumns>
-          <ImageDrop v-for="item in [1, 2, 3, 4, 5]" :key="item" :item="item"></ImageDrop>
+          <ImageDrop v-for="item in [1, 2, 3, 4, 5]" :key="item" :item="item" />
         </TwoColumns>
       </TabElement>
       <TabElement :visible="currentPage === 'texts'">
         <TwoColumns>
-          <Button @on-click="createText" type="green">Neu</Button>
-          <Button v-for="(item, index) in texts" @on-click="clickedOnText(item.id)">
-            {{ 'Text ' + (index as number + 1) }}
+          <Button @click="createText" type="green">Neu</Button>
+          <Button v-for="(item, index) in texts" :key="item.id" @click="clickedOnText(item.id)">
+            {{ 'Text ' + (index + 1) }}
           </Button>
         </TwoColumns>
       </TabElement>
@@ -168,7 +126,7 @@ updateStorageSize();
             text="JSON importieren"
             identifier="dropzone-file-import"
             @some-event="jsonImport"
-          ></FileDrop>
+          />
         </TwoColumns>
         <TwoColumns>
           <label>Datei&nbsp;speichern:</label>
@@ -179,12 +137,10 @@ updateStorageSize();
         </TwoColumns>
       </TabElement>
 
-      <TextModal class="mt-auto" @reload-texts="reloadTexts" />
+      <TextModal class="mt-auto" />
       <div class="text-center" v-if="mode === 'development'">
-        <div class="hover:cursor-pointer" @click="updateStorageSize()">
-          LocalStorage: {{ localStorageSize }}
-        </div>
-        <div>Bilder: {{ usePersistentStore().images.size }}</div>
+        <div>LocalStorage: {{ localStorageSize() }}</div>
+        <div>Bilder: {{ persistentStore.images.size }}</div>
       </div>
       <span class="text-center"
         >Contribute on
@@ -195,9 +151,3 @@ updateStorageSize();
     </div>
   </aside>
 </template>
-
-<style>
-.wrapper {
-  width: 50px;
-}
-</style>

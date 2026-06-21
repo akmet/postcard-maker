@@ -2,22 +2,17 @@ import Konva from 'konva';
 import { useStageStore } from '../stores/stageStore';
 import getStageElementsByTemplate from './getStageElementsByTemplate';
 import { usePersistentStore } from '../stores/persistentStore';
+import type { Layout } from '../types/types';
 
-export default function (event: Event) {
-  const target = event.target;
-  if (!(target instanceof HTMLSelectElement)) {
-    throw new Error('target is not select element');
-  }
-  const layout = Number.parseInt(target.value);
+export default function (layout: Layout) {
   const persistentStore = usePersistentStore();
-  if (persistentStore.layout == layout) {
-    throw new Error('cannot change layout to current layout');
-  }
+  if (persistentStore.layout === layout) return;
+
   persistentStore.setLayout(layout);
   const stage = useStageStore().stage as Konva.Stage;
-
   const layers = getStageElementsByTemplate();
-  for (let layer of layers) {
+
+  for (const layer of layers) {
     const group = stage.findOne(
       (node: Konva.Node) => node instanceof Konva.Group && node.name() === layer.name
     ) as Konva.Group;
@@ -27,10 +22,8 @@ export default function (event: Event) {
       width: layer.width,
       height: layer.height
     });
-    const image = group.findOne((node: Konva.Image) => node instanceof Konva.Image) as Konva.Image;
-    if (!(image instanceof Konva.Image)) {
-      continue;
-    }
+    const image = group.findOne((node: Konva.Node) => node instanceof Konva.Image) as Konva.Image;
+    if (!(image instanceof Konva.Image)) continue;
     image.width(layer.width);
     image
       .height((layer.width / image.getAttr('imgWidth')) * image.getAttr('imgHeight'))

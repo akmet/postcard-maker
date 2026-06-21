@@ -7,8 +7,8 @@ export default function (target: Konva.Stage | Konva.Shape) {
     return;
   }
 
-  if (target instanceof Konva.Rect && target.id() === useStageStore().background_rect?.id()) {
-    let layers = target.getStage()?.getLayers();
+  if (target instanceof Konva.Rect && target.id() === useStageStore().backgroundRect?.id()) {
+    const layers = target.getStage()?.getLayers();
     if (layers) {
       attachNodeToTransformer(layers);
     }
@@ -26,11 +26,11 @@ export default function (target: Konva.Stage | Konva.Shape) {
   if (target.getParent() instanceof Konva.Transformer) {
     return;
   }
+
   if (target instanceof Konva.Image || target instanceof Konva.Text) {
-    let layers = target.getStage()?.getLayers();
+    const layers = target.getStage()?.getLayers();
     if (layers) {
       attachNodeToTransformer(layers, target);
     }
-    return;
   }
 }

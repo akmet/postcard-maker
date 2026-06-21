@@ -13,12 +13,11 @@ export function createText() {
 }
 
 export function loadText(text: TextData) {
-  const group_texts = useStageStore().group_texts as Konva.Group;
-  if (!group_texts) {
+  const groupTexts = useStageStore().groupTexts as Konva.Group;
+  if (!groupTexts) {
     throw new Error('Cannot load text when stage not set-up');
   }
   const konvaText = Konva.Text.create(text.attributes)
-
     .on('dragend transformend', ($event: KonvaEventObject<unknown>) => {
       const currentText = $event.currentTarget as Konva.Text;
       usePersistentStore().updateText(currentText.id(), currentText.toJSON());
@@ -35,36 +34,33 @@ export function loadText(text: TextData) {
   if (konvaText.id() === '') {
     konvaText.id(text.id);
   }
-  group_texts.add(konvaText);
+  groupTexts.add(konvaText);
 }
 
 export function destroyText(text: TextData) {
-  const group_texts = useStageStore().group_texts as Konva.Group;
-  if (!group_texts) {
-    throw new Error('Cannot load text when stage not set-up');
+  const groupTexts = useStageStore().groupTexts as Konva.Group;
+  if (!groupTexts) {
+    throw new Error('Cannot destroy text when stage not set-up');
   }
-  group_texts
+  groupTexts
     .findOne((node: Konva.Node) => node instanceof Konva.Text && node.id() === text.id)
     ?.destroy();
   usePersistentStore().destroyText(text.id);
 }
 
 export function reloadTexts() {
-  const group_texts = useStageStore().group_texts as Konva.Group;
-  if (!group_texts) {
+  const groupTexts = useStageStore().groupTexts as Konva.Group;
+  if (!groupTexts) {
     throw new Error('Cannot reload text when stage not set-up');
   }
-  group_texts.destroyChildren();
-  for (let text of usePersistentStore().texts) {
+  groupTexts.destroyChildren();
+  for (const text of usePersistentStore().texts) {
     loadText(text);
   }
 }
 
 export function initializeTexts() {
-  const persistentStore = usePersistentStore();
-  const texts = persistentStore.texts as TextData[];
-
-  for (let text of texts) {
+  for (const text of usePersistentStore().texts) {
     loadText(text);
   }
 }

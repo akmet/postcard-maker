@@ -8,9 +8,9 @@ export const useStageStore = defineStore('stage', {
       width: 1748,
       height: 1240
     },
-    group_texts: null as Konva.Group | null,
-    group_images: null as Konva.Group | null,
-    background_rect: null as Konva.Rect | null,
+    groupTexts: null as Konva.Group | null,
+    groupImages: null as Konva.Group | null,
+    backgroundRect: null as Konva.Rect | null,
     selectedNode: undefined as Konva.Node | undefined
   }),
 
@@ -19,13 +19,13 @@ export const useStageStore = defineStore('stage', {
       this.stage = stage;
     },
     setGroupTexts(group: Konva.Group) {
-      this.group_texts = group;
+      this.groupTexts = group;
     },
     setGroupImages(group: Konva.Group) {
-      this.group_images = group;
+      this.groupImages = group;
     },
     setBackgroundRect(rect: Konva.Rect) {
-      this.background_rect = rect;
+      this.backgroundRect = rect;
     },
     selectNode(node: Konva.Node | undefined) {
       this.selectedNode = node;

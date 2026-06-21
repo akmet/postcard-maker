@@ -79,5 +79,8 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps(['titles', 'selected']);
+type TabTitle = { target: string; icon: 'coq' | 'photograph' | 'annotation' | 'download' };
+
+const props = defineProps<{ titles: TabTitle[]; selected: string }>();
+defineEmits<{ switchPage: [page: string] }>();
 </script>
